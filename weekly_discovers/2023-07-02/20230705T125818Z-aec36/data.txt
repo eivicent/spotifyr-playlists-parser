@@ -1,0 +1,9 @@
+file: 2023-07-02.csv
+file_size: 3045
+pin_hash: aec3639d14a9ca0c
+type: csv
+title: '2023-07-02: a pinned 30 x 7 data frame'
+description: ~
+tags: ~
+created: 20230705T125818Z
+api_version: 1.0
