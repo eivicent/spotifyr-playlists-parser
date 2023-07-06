@@ -22,9 +22,12 @@ songs <- temp %>%  select(date = added_at,
   mutate(date = as.Date(date))
 
 final_df <- artists %>% bind_cols(songs)
+print(final_df)
 
 day = as.character(unique(final_df$date))
 
-board <- write.csv2(x = final_df, 
+print(day)
+
+write.csv2(x = final_df, 
                     file = paste0("./weekly_discovers/",day,".csv"),
                     row.names = F)
