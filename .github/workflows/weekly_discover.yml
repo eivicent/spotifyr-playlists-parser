@@ -7,7 +7,7 @@ on:
 
 jobs:
   run_script:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
