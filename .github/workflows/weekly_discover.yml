@@ -16,7 +16,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Install packages
-        run: Rscript -e 'install.packages(c("spotifyr", "dplyr"))'
+        run: Rscript -e 'install.packages(c("httr","rvest", "spotifyr", "dplyr"))'
       - name: Run script
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
