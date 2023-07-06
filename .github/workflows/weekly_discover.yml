@@ -5,7 +5,8 @@ name: Weekly Discovery parsing
 on:
   schedule:
     cron:
-      - 0 9 * * 1
+      - "0 9 * * 1" #Run every monday at 9
+  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
