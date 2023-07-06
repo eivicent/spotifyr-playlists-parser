@@ -1,6 +1,5 @@
 install.packages("spotifyr")
 library(spotifyr)
-install.packages("dplyr")
 library(dplyr)
 
 access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
