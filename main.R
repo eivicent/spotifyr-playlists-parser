@@ -1,14 +1,8 @@
 library(spotifyr)
-library(tidyverse)
-library(pins)
+library(dplyr)
 
-# Set up the SpotifyR credentials
-Sys.setenv(SPOTIFY_CLIENT_ID = Sys.getenv("SPOTIFY_CLIENT_ID"))
-Sys.setenv(SPOTIFY_CLIENT_SECRET = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
-
-access_token <- get_spotify_access_token()
-
-get_user_playlists("eivicent")
+access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
+                                         client_secret = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
 
 temp <- get_playlist_tracks(playlist_id = "37i9dQZEVXcGWdRbKjgpyh") 
 
@@ -23,11 +17,12 @@ songs <- temp %>%  select(date = added_at,
                           popularity = track.popularity, 
                           release_date = track.album.release_date, 
                           id = track.album.id) %>% 
-  mutate(date = lubridate::as_date(date))
+  mutate(date = as.Date(date))
 
 final_df <- artists %>% bind_cols(songs)
 
-board <- pins::board_folder(path = "~/GitHub/spotifyr-playlists-parser/weekly_discovers/", versioned = F)
+day = as.character(unique(final_df$date))
 
-pins::pin_write(board, x = final_df, name = as.character(unique(final_df$date)),
-                type = "csv",versioned = F)
+board <- write.csv2(x = final_df, 
+                    file = paste0("./weekly_discovers/",day,".csv"),
+                    row.names = F)
