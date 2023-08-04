@@ -1,4 +1,4 @@
-install.packages("spotifyr")
+if(!require(spotifyr)){install.packages("spotifyr")}
 library(spotifyr)
 library(dplyr)
 
