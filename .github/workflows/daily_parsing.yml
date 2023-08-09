@@ -2,7 +2,7 @@ name: Weekly Discovery
 
 on:
   schedule:
-    - cron: "0 9 * * 1" # Run every Monday at 9 AM
+    - cron: "0 */12 * * *" # Run every 12 hours
   workflow_dispatch:
 
 jobs:
@@ -26,14 +26,14 @@ jobs:
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: Rscript weekly_discovery.R
+        run: Rscript daily_parsing.R
         
       - name: Commit files
         run: |
           git config --local user.name github-actions
           git config --local user.email "actions@github.com"
           git add *
-          git commit -am "Weekly discovery commit on $(date)"
+          git commit -am "Daily parsing commit on $(date)"
           git push origin main
         env:
           REPO_KEY: ${{secrets.GITHUB_TOKEN}}
