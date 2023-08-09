@@ -18,29 +18,29 @@ clean_api_call_output <- function(output_from_get_my_recently_played) {
 access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
                                          client_secret = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
 
+file <- "./daily_listen/history.txt"
 
+history <- read.table(file, header = T, sep = ";") %>% 
+  mutate(played = as.POSIXct(played, "GMT"),
+         day = as.Date(day))
 
-start_date <- Sys.Date() - 1
-start_time <- as.character((as.integer(floor_date(as.POSIXct(Sys.time(), "GMT"), "day")) - 60*24)*1000)
+start_time <- as.integer(max(history$played))*1000
 
-aux <- get_my_recently_played(authorization = get_spotify_authorization_code(scope = "user-read-recently-played"),
-                              after = as.character(start_before*1000),
-                              limit = 20)
-df <- clean_api_call_output(aux)
+output <- list(); ii <- 1
+repeat{
+  aux <- get_my_recently_played(authorization = get_spotify_authorization_code(scope = "user-read-recently-played"),
+                                after = as.character(start_time), limit = 20)
+  
+  df <- clean_api_call_output(aux)
 
-aux2 <- get_my_recently_played(authorization = get_spotify_authorization_code(scope = "user-read-recently-played"),
-                              after = as.character(as.integer(max(df$played))*1000),
-                              limit = 50)
+  output[[ii]] <- df
+  start_time <- max(as.character(as.integer(df$played)*1000)); ii <- ii + 1
+  Sys.sleep(10)
+  if(nrow(df) < 20) break
+}
 
-df2 <- clean_api_call_output(aux2)
+final_df <- bind_rows(output) %>% anti_join(history) %>%  unique() %>%  arrange(played) %>% 
+  mutate(played = as.character(played),
+         day = as.character(day))
 
-as_date(max(df2$played))
-
-
- 
-
-
-
-
-
-
+write.table(x = final_df,  sep = ";", file = file, row.names = F, append = T)
