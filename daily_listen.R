@@ -39,8 +39,9 @@ repeat{
   if(nrow(df) < 20) break
 }
 
-final_df <- bind_rows(output) %>% anti_join(history) %>%  unique() %>%  arrange(played) %>% 
+final_df <- bind_rows(output) %>% bind_rows(history)  %>%  arrange(played) %>% 
   mutate(played = as.character(played),
-         day = as.character(day))
+         day = as.character(day)) %>% 
+  unique()
 
-write.table(x = final_df,  sep = ";", file = file, row.names = F, append = T)
+write.table(x = final_df,  sep = ";", file = file, row.names = T)
