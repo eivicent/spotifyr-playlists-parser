@@ -1,4 +1,5 @@
 if(!require(spotifyr)){install.packages("spotifyr")}
+if(!require(httpuv)){install.packages("httpuv")}
 library(spotifyr)
 library(dplyr)
 library(lubridate)
@@ -32,7 +33,7 @@ repeat{
                                 after = as.character(start_time), limit = 20)
   
   df <- clean_api_call_output(aux)
-
+  
   output[[ii]] <- df
   start_time <- max(as.character(as.integer(df$played)*1000)); ii <- ii + 1
   Sys.sleep(10)
