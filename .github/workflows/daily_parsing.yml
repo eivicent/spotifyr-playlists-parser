@@ -1,4 +1,4 @@
-name: Weekly Discovery
+name: Daily parsing
 
 on:
   schedule:
