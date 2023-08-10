@@ -19,6 +19,7 @@ jobs:
           
       - name: Decrypt large secret
         run: ./decrypt_secret.sh
+        shell: bash
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
       # This command is just an example to show your secret being printed
