@@ -25,7 +25,9 @@ jobs:
       # Ensure you remove any print statements of your secrets. GitHub does
       # not hide secrets that use this workaround.
       - name: Test printing your secret (Remove this step in production)
-        run: cat ./secrets/my_secret
+        run: ls ./
+      -name: Test 2
+        run: ls ././
         
       - name: Commit files
         run: |
