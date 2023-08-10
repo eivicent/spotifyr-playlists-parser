@@ -26,6 +26,7 @@ jobs:
       # not hide secrets that use this workaround.
       - name: Test printing your secret (Remove this step in production)
         run: ls ./
+        
       -name: Test 2
         run: ls ././
         
