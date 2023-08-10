@@ -31,7 +31,7 @@ mytoken <- readRDS("secrets/my_secret")[[1]]
 
 output <- list(); ii <- 1
 repeat{
-  aux <- get_my_recently_played(authorization = get_spotify_authorization_code(scope = "user-read-recently-played"),
+  aux <- get_my_recently_played(authorization = mytoken,
                                 after = as.character(start_time), limit = 20)
   
   df <- clean_api_call_output(aux)
