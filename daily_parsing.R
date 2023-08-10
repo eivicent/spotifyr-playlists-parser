@@ -27,7 +27,7 @@ history <- read.table(file, header = T, sep = ";") %>%
 
 start_time <- as.integer(max(history$played))*1000
 
-mytoken <- readRDS("my_secret")[[1]]
+mytoken <- readRDS("secrets/my_secret")[[1]]
 
 output <- list(); ii <- 1
 repeat{
