@@ -21,7 +21,11 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_
 
 file <- "./daily_listen/history.txt"
 
-history <- read.table(file, header = T, sep = ";") %>% 
+history <- read.table(file, header = T, sep = ";", quote = "")
+names(history) <- c("played_at", "track_name","name", "played", "day")
+
+history <- history %>% 
+  mutate(across(played_at:day, ~gsub(x = ., pattern = "\"", replacement = ""))) %>% 
   mutate(played = as.POSIXct(played, "GMT"),
          day = as.Date(day))
 
