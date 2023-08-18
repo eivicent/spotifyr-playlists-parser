@@ -1,5 +1,4 @@
 if(!require(spotifyr)){install.packages("spotifyr")}
-if(!require(httpuv)){install.packages("httpuv")}
 library(spotifyr)
 library(dplyr)
 library(lubridate)
@@ -22,7 +21,7 @@ access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_
 file <- "./daily_listen/history.txt"
 
 history <- read.table(file, header = T, sep = ";", quote = "")
-names(history) <- c("played_at", "track_name","name", "played", "day")
+names(history) <- c("played_at", "track.name","name", "played", "day")
 
 history <- history %>% 
   mutate(across(played_at:day, ~gsub(x = ., pattern = "\"", replacement = ""))) %>% 
