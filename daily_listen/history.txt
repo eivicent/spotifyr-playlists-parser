@@ -1740,3 +1740,6 @@
 "2023-09-22T00:33:01.416Z";"Too Many Girls";"The Mystery Lights";"2023-09-22 00:33:01.416";"2023-09-22"
 "2023-09-22T00:35:26.524Z";"Do Right";"The Limboos";"2023-09-22 00:35:26.524";"2023-09-22"
 "2023-09-22T01:42:22.465Z";"Big Wheel";"Saun & Starr";"2023-09-22 01:42:22.465";"2023-09-22"
+"2023-09-22T21:56:34.491Z";"Symphony No. 1 in C Major, Op. 21: I. Adagio molto - Allegro con brio";"Ludwig van Beethoven";"2023-09-22 21:56:34.491";"2023-09-22"
+"2023-09-22T22:03:47.819Z";"Symphony No. 1 in C Major, Op. 21: II. Andante cantabile con moto";"Ludwig van Beethoven";"2023-09-22 22:03:47.819";"2023-09-22"
+"2023-09-22T22:07:11.283Z";"Symphony No. 1 in C Major, Op. 21: III. Menuetto. Allegro molto e vivace";"Ludwig van Beethoven";"2023-09-22 22:07:11.283";"2023-09-22"
