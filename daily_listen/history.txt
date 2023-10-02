@@ -1997,3 +1997,5 @@
 "2023-09-30T09:48:29.427Z";"The Fox";"Heart of Dixie";"2023-09-30 09:48:29.427";"2023-09-30"
 "2023-09-30T09:51:11.480Z";"Che si fa con le fanciulle";"The Club Swing Band";"2023-09-30 09:51:11.48";"2023-09-30"
 "2023-09-30T20:20:25.357Z";"Cubano Chant (Art Blakey & the Jazz Messengers: Drum Suite)";"Art Blakey";"2023-09-30 20:20:25.357";"2023-09-30"
+"2023-10-01T18:57:14.212Z";"Optinen harha (feat. Ellips)";"Pyhimys";"2023-10-01 18:57:14.212";"2023-10-01"
+"2023-10-01T21:32:43.928Z";"Optinen harha (feat. Ellips)";"Pyhimys";"2023-10-01 21:32:43.928";"2023-10-01"
