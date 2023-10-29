@@ -3042,7 +3042,7 @@
 "2023-10-28T14:28:21.516Z";"Qué Vida Tan Dura";"Arde Bogotá";"2023-10-28 14:28:21.516";"2023-10-28"
 "2023-10-28T14:35:29.477Z";"Ghetto";"Yona";"2023-10-28 14:35:29.477";"2023-10-28"
 "2023-10-28T14:39:14.627Z";"jealousy, jealousy";"Olivia Rodrigo";"2023-10-28 14:39:14.627";"2023-10-28"
-"2023-10-28T14:42:10.462Z";"All I Want - From \"High School Musical: The Musical: The Series\"";"Olivia Rodrigo";"2023-10-28 14:42:10.462";"2023-10-28"
+"2023-10-28T14:42:10.462Z";"All I Want - From \High School Musical: The Musical: The Series\";"Olivia Rodrigo";"2023-10-28 14:42:10.462";"2023-10-28"
 "2023-10-28T14:44:32.642Z";"brutal";"Olivia Rodrigo";"2023-10-28 14:44:32.642";"2023-10-28"
 "2023-10-28T14:48:02.459Z";"enough for you";"Olivia Rodrigo";"2023-10-28 14:48:02.459";"2023-10-28"
 "2023-10-28T14:59:05.636Z";"vampire";"Olivia Rodrigo";"2023-10-28 14:59:05.636";"2023-10-28"
