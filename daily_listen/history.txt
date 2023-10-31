@@ -3116,3 +3116,4 @@
 "2023-10-30T18:17:15.627Z";"Shufflin & Rollin'";"Buddy Johnson";"2023-10-30 18:17:15.627";"2023-10-30"
 "2023-10-30T18:20:01.491Z";"Swing Paradise (Slow Version)";"THE SCHWINGS BAND";"2023-10-30 18:20:01.491";"2023-10-30"
 "2023-10-30T18:22:45.500Z";"Effervescent Blues";"Hot Swing Sextet";"2023-10-30 18:22:45.5";"2023-10-30"
+"2023-10-30T18:25:38.588Z";"Lindy Hopper's Delight";"Ella Fitzgerald and Her Famous Orchestra";"2023-10-30 18:25:38.588";"2023-10-30"
