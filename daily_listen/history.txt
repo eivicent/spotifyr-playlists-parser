@@ -6089,7 +6089,7 @@
 "2024-01-18T13:24:30.103Z";"Shout And Feel It";"Tom Cunningham Orchestra";"2024-01-18 13:24:30.103";"2024-01-18"
 "2024-01-18T13:26:37.109Z";"Monsters, Inc.";"Randy Newman";"2024-01-18 13:26:37.109";"2024-01-18"
 "2024-01-18T13:32:52.030Z";"Roll'em Pete";"Count Basie Orchestra";"2024-01-18 13:32:52.03";"2024-01-18"
-"2024-01-18T13:40:49.106Z";"Mack the Knife - Edit; 2006 Remaster";"Bobby Darin";"2024-01-18 13:40:49.106";"2024-01-18"
+"2024-01-18T13:40:49.106Z";"Mack the Knife - Edit 2006 Remaster";"Bobby Darin";"2024-01-18 13:40:49.106";"2024-01-18"
 "2024-01-18T13:44:49.098Z";"Bring Me Sunshine";"Shakin' All";"2024-01-18 13:44:49.098";"2024-01-18"
 "2024-01-18T13:47:47.107Z";"Big Apple Contest";"The Solomon Douglas Swingtet";"2024-01-18 13:47:47.107";"2024-01-18"
 "2024-01-18T13:59:51.117Z";"Shufflin & Rollin'";"Buddy Johnson";"2024-01-18 13:59:51.117";"2024-01-18"

@@ -48,7 +48,7 @@ repeat{
 final_df <- bind_rows(output) %>% bind_rows(history)  %>%  arrange(played) %>% 
   mutate(played = as.character(played),
          day = as.character(day),
-         name = stringr::str_remove_all(name, "#")) %>% 
+         name = stringr::str_remove_all(stringr::str_remove_all(name, "#"),";")) %>% 
   unique()
 
 write.table(x = final_df,  sep = ";", file = file, row.names = F)
