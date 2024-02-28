@@ -7381,3 +7381,5 @@
 "2024-02-27T15:18:08.769Z";"Loose Wig";"Hot Swing Sextet";"2024-02-27 15:18:08.769";"2024-02-27"
 "2024-02-27T15:21:57.866Z";"I Can't Believe You're In Love With Me";"Jonathan Stout and his Campus Five";"2024-02-27 15:21:57.866";"2024-02-27"
 "2024-02-27T15:25:31.363Z";"Ooh-Shoo-Be-Doo-Bee";"Shakin' All";"2024-02-27 15:25:31.363";"2024-02-27"
+"2024-02-27T15:30:19.357Z";"Sandhu / Splanky (Medley)";"Swing Shouters";"2024-02-27 15:30:19.357";"2024-02-27"
+"2024-02-27T20:38:21.926Z";"Optinen harha (feat. Ellips)";"Pyhimys";"2024-02-27 20:38:21.926";"2024-02-27"
