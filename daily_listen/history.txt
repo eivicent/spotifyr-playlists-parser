@@ -7956,7 +7956,7 @@
 "2024-03-21T09:24:57.133Z";"Per Mars I Muntanyes";"Els Amics De Les Arts";"2024-03-21 09:24:57.133";"2024-03-21"
 "2024-03-21T09:28:59.063Z";"Miracles";"Els Amics De Les Arts";"2024-03-21 09:28:59.063";"2024-03-21"
 "2024-03-21T09:33:53.385Z";"Els desperfectes";"Els Amics De Les Arts";"2024-03-21 09:33:53.385";"2024-03-21"
-"2024-03-21T09:37:45.013Z";"Escriurem #joemcorono";"Miki Núñez";"2024-03-21 09:37:45.013";"2024-03-21"
+"2024-03-21T09:37:45.013Z";"Escriurem joemcorono";"Miki Núñez";"2024-03-21 09:37:45.013";"2024-03-21"
 "2024-03-21T13:45:10.016Z";"L'Affaire Sofia";"Els Amics De Les Arts";"2024-03-21 13:45:10.016";"2024-03-21"
 "2024-03-21T13:49:38.054Z";"No Ho Entens";"Els Amics De Les Arts";"2024-03-21 13:49:38.054";"2024-03-21"
 "2024-03-21T13:54:04.043Z";"El Seu Gran Hit";"Els Amics De Les Arts";"2024-03-21 13:54:04.043";"2024-03-21"
