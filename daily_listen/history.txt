@@ -8205,3 +8205,6 @@
 "2024-04-05T15:38:47.748Z";"In a Mellow Tone";"Holy Bounce Orchestra";"2024-04-05 15:38:47.748";"2024-04-05"
 "2024-04-05T15:46:36.160Z";"Tuxedo Junction (TRANKY-DOO)";"Giorgio Cùscito & Swing Valley Band";"2024-04-05 15:46:36.16";"2024-04-05"
 "2024-04-05T15:53:15.985Z";"Benny's Bugle";"Brooks Prumo Orchestra";"2024-04-05 15:53:15.985";"2024-04-05"
+"2024-04-05T16:15:40.487Z";"Southern Fried";"Charlie Barnet & His Orchestra";"2024-04-05 16:15:40.487";"2024-04-05"
+"2024-04-06T15:28:52.546Z";"Stomping at the Renny (05-25-37)";"Edgar Hayes";"2024-04-06 15:28:52.546";"2024-04-06"
+"2024-04-06T15:41:24.464Z";"Zapatillas";"El Canto Del Loco";"2024-04-06 15:41:24.464";"2024-04-06"
