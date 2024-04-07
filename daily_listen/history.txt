@@ -8208,3 +8208,5 @@
 "2024-04-05T16:15:40.487Z";"Southern Fried";"Charlie Barnet & His Orchestra";"2024-04-05 16:15:40.487";"2024-04-05"
 "2024-04-06T15:28:52.546Z";"Stomping at the Renny (05-25-37)";"Edgar Hayes";"2024-04-06 15:28:52.546";"2024-04-06"
 "2024-04-06T15:41:24.464Z";"Zapatillas";"El Canto Del Loco";"2024-04-06 15:41:24.464";"2024-04-06"
+"2024-04-06T20:15:32.071Z";"Stomping at the Renny (05-25-37)";"Edgar Hayes";"2024-04-06 20:15:32.071";"2024-04-06"
+"2024-04-06T21:14:22.250Z";"The Shim Sham Song";"Bill Elliott Swing Orchestra";"2024-04-06 21:14:22.25";"2024-04-06"
