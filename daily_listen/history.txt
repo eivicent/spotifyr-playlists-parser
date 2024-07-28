@@ -11490,3 +11490,4 @@
 "2024-07-27T16:09:27.368Z";"Parisian Throughfare - Jazz Mambo";"Ricardo Ray";"2024-07-27 16:09:27.368";"2024-07-27"
 "2024-07-27T16:14:06.660Z";"Mambo Moderno";"Vladimir and his orchestra";"2024-07-27 16:14:06.66";"2024-07-27"
 "2024-07-27T16:21:14.061Z";"Vámonos Pa'l Monte";"Eddie Palmieri";"2024-07-27 16:21:14.061";"2024-07-27"
+"2024-07-28T12:13:31.445Z";"Pa’ La Ocha Tambó";"Eddie Palmieri";"2024-07-28 12:13:31.445";"2024-07-28"
