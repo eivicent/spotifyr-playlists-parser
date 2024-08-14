@@ -11893,7 +11893,7 @@
 "2024-08-13T11:57:34.057Z";"Alone Together - Rudy Van Gelder Remaster 2006";"Kenny Dorham";"2024-08-13 11:57:34.057";"2024-08-13"
 "2024-08-13T12:00:07.052Z";"Taking A Chance On Love";"Sonny Stitt Quartet";"2024-08-13 12:00:07.052";"2024-08-13"
 "2024-08-13T12:03:35.097Z";"I'm Gonna Sit Right Down And Write Myself A Letter";"Johnny Hodges";"2024-08-13 12:03:35.097";"2024-08-13"
-"2024-08-13T12:06:39.836Z";"You Stepped Out Of A Dream";"Eddie \"Lockjaw\" Davis";"2024-08-13 12:06:39.836";"2024-08-13"
+"2024-08-13T12:06:39.836Z";"You Stepped Out Of A Dream";"Eddie \Lockjaw\ Davis";"2024-08-13 12:06:39.836";"2024-08-13"
 "2024-08-13T12:11:12.094Z";"Harlem Nocturne";"Illinois Jacquet";"2024-08-13 12:11:12.094";"2024-08-13"
 "2024-08-13T12:14:39.040Z";"A Smooth One";"Junior Mance";"2024-08-13 12:14:39.04";"2024-08-13"
 "2024-08-13T13:54:40.072Z";"Ken Saro-Wiwa On Kuollut";"Ultra Bra";"2024-08-13 13:54:40.072";"2024-08-13"
