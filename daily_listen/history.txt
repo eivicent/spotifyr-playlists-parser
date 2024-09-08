@@ -12527,3 +12527,8 @@
 "2024-09-07T14:12:38.196Z";"Just A Gigolo / I Ain't Got Nobody - Medley / Remastered 2002";"Louis Prima";"2024-09-07 14:12:38.196";"2024-09-07"
 "2024-09-07T14:45:39.794Z";"¡Mambo caliente!";"La Ciencia de Juancho Valencia";"2024-09-07 14:45:39.794";"2024-09-07"
 "2024-09-07T14:48:57.491Z";"El Guato de Catalina";"Cuba Cuba";"2024-09-07 14:48:57.491";"2024-09-07"
+"2024-09-08T10:54:56.562Z";"Salvaje";"Fuel Fandango";"2024-09-08 10:54:56.562";"2024-09-08"
+"2024-09-08T16:14:23.314Z";"Blues My Naughty Sweetie Gives To Me";"Sidney Bechet";"2024-09-08 16:14:23.314";"2024-09-08"
+"2024-09-08T16:55:35.630Z";"On the Sunny Side of the Street";"Professor Cunningham And His Old School";"2024-09-08 16:55:35.63";"2024-09-08"
+"2024-09-08T17:00:23.855Z";"Lonely";"Imagine Dragons";"2024-09-08 17:00:23.855";"2024-09-08"
+"2024-09-08T17:10:25.618Z";"Pa' Mantener Tradición";"Jimmy Bosch";"2024-09-08 17:10:25.618";"2024-09-08"
