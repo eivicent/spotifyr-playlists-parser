@@ -1,0 +1,104 @@
+---
+title: "dashboard"
+format: html
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r DATA TREATMENT}
+history <- read.csv2("~/GitHub/spotifyr-playlists-parser/daily_listen/history.txt") %>% 
+  mutate(date = as.Date(day),
+         month = floor_date(date, "month"),
+         year = floor_date(date, "year")) 
+```
+
+```{r}
+summary_df <- history %>%
+  filter(day < floor_date(Sys.Date(),"month")) %>% 
+  mutate(unique_songs_month = n_distinct(track.name),
+         songs_month = n(), .by = month) %>% 
+  mutate(unique_songs_year = n_distinct(track.name),
+         songs_year = n(), .by = year) %>% 
+  summarise(unique_songs_month = mean(unique_songs_month),
+            songs_month = mean(songs_month),
+            unique_songs_year = mean(unique_songs_year),
+            songs_year = mean(songs_year),
+            unique_songs_day = n_distinct(track.name),
+            songs_day = n(), .by = c(date,month,year)) %>% 
+  mutate(ratio_daytomonth = unique_songs_day/unique_songs_month,
+         ratio_monthtoyear = unique_songs_month/unique_songs_year,
+         ratio_repetition_daily = songs_day/unique_songs_day,
+         ratio_repetition_month = songs_month/unique_songs_month,
+         ratio_repetition_year = songs_year/unique_songs_year)
+
+summary_df %>% 
+  ggplot(aes(x = date)) +
+  geom_line(aes(y = ratio_daytomonth)) +
+  geom_line(aes(y = ratio_monthtoyear)) +
+  geom_smooth(aes(y = ratio_daytomonth), method = "lm", linetype = 2,
+              se = F, color = "red") +
+  theme_minimal() +
+  scale_y_continuous(labels = label_percent(),
+                     breaks = c(0.05,seq(0,1,.10))) +
+  scale_x_date(date_breaks = "month", date_labels = "%m-%y",
+               expand = c(0,0)) +
+  theme(panel.grid.minor = element_blank()) +
+  labs(x = NULL, y = NULL)
+
+summary_df %>% 
+  ggplot(aes(x = date)) +
+  geom_col(aes(y = ratio_repetition_daily, color = "daily")) +
+  geom_line(aes(y = ratio_repetition_month, color = "monthly")) +
+  geom_line(aes(y = ratio_repetition_year, color = "yearly")) +
+  scale_y_continuous(labels = label_number(), breaks = seq(1,100,.1)) +
+  coord_cartesian(ylim = c(1,NA)) + 
+  scale_color_gdocs(guide = "none") +
+  labs(x = NULL, y = NULL, title = "Repetition factor",
+       subtitle = "Songs / Unique Songs") +
+  theme_minimal() +
+  scale_x_date(expand = c(0,0)) +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank())
+```
+
+```{r}
+top_artists <- history %>% 
+  summarise(songs = n_distinct(track.name), .by = c(month, name)) %>% 
+  arrange(month, desc(songs)) %>% 
+  slice_head(n = 1, by = month) %>% 
+  mutate(top = row_number(),
+         ratio = songs/sum(songs),
+         sratio = cumsum(ratio),
+         y_pos = coalesce(lag(sratio) + 1/2*ratio, 1/2*sratio),
+         .by = month) %>% 
+  inner_join(distinct(summary_df, month, unique_songs_month)) %>% 
+  mutate(month_order = row_number()) 
+
+top_artists %>% 
+  
+  ggplot(aes(x = month_order,
+             y = songs/unique_songs_month,
+             fill = name)) +
+  geom_col(width = 1) +
+  geom_text(aes(label = name, 
+                y = songs/unique_songs_month/2
+                ),angle = 90) +
+  scale_fill_gdocs(guide = "none") +
+  scale_y_continuous(labels = label_percent(),
+                     breaks = seq(0,.1,.01))  +
+  scale_x_continuous(expand = c(0,0), 
+                     labels = format(top_artists$month,"%b-%y"),
+                     breaks = top_artists$month_order) +
+  theme_minimal() +
+  labs(x= NULL, y =NULL, title = NULL) +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank())
+
+history 
+```
+
+
+
