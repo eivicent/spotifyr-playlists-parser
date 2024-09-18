@@ -12782,7 +12782,7 @@
 "2024-09-17T05:54:51.292Z";"Ven Que Te Quiero Ver";"Alex Ferreira";"2024-09-17 05:54:51.292";"2024-09-17"
 "2024-09-17T05:57:47.711Z";"Me Gusta La Vida";"Funambulista";"2024-09-17 05:57:47.711";"2024-09-17"
 "2024-09-17T06:04:04.099Z";"Bilongo";"Eddie Palmieri";"2024-09-17 06:04:04.099";"2024-09-17"
-"2024-09-17T07:38:50.036Z";"Honeysuckle Rose (\"A La Basie\")";"Jonathan Stout and his Campus Five";"2024-09-17 07:38:50.036";"2024-09-17"
+"2024-09-17T07:38:50.036Z";"Honeysuckle Rose (\A La Basie\)";"Jonathan Stout and his Campus Five";"2024-09-17 07:38:50.036";"2024-09-17"
 "2024-09-17T07:41:41.066Z";"Tunis In";"Jonathan Stout and his Campus Five";"2024-09-17 07:41:41.066";"2024-09-17"
 "2024-09-17T07:44:35.035Z";"Just About Right for Me";"Jonathan Stout and his Campus Five";"2024-09-17 07:44:35.035";"2024-09-17"
 "2024-09-17T07:47:56.032Z";"You've Got Me Voodoo'd";"Jonathan Stout and his Campus Five";"2024-09-17 07:47:56.032";"2024-09-17"
