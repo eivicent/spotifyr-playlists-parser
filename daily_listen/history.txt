@@ -14206,3 +14206,4 @@
 "2024-12-06T21:49:21.856Z";"I'm the One (feat. Justin Bieber, Quavo, Chance the Rapper & Lil Wayne)";"DJ Khaled";"2024-12-06 21:49:21.856";"2024-12-06"
 "2024-12-06T21:51:30.045Z";"Jocelyn Flores";"XXXTENTACION";"2024-12-06 21:51:30.045";"2024-12-06"
 "2024-12-06T21:57:01.142Z";"Lose Yourself";"Eminem";"2024-12-06 21:57:01.142";"2024-12-06"
+"2024-12-06T22:46:33.348Z";"Lucid Dreams";"Juice WRLD";"2024-12-06 22:46:33.348";"2024-12-06"
