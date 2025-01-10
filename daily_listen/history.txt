@@ -14687,3 +14687,5 @@
 "2025-01-09T13:03:32.150Z";"La Primavera";"Alvaro Ruiz";"2025-01-09 13:03:32.15";"2025-01-09"
 "2025-01-09T13:06:56.918Z";"Alguna Cosa Se Nos Está Escapando";"Guillem Roma";"2025-01-09 13:06:56.918";"2025-01-09"
 "2025-01-09T13:10:48.347Z";"El Plan Maestro";"Jorge Drexler";"2025-01-09 13:10:48.347";"2025-01-09"
+"2025-01-10T09:37:52.965Z";"Half Tight Boogie";"Jonathan Stout and his Campus Five";"2025-01-10 09:37:52.965";"2025-01-10"
+"2025-01-10T10:33:59.008Z";"Man About Town";"Michael Gamble & The Rhythm Serenaders";"2025-01-10 10:33:59.008";"2025-01-10"
