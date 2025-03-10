@@ -1,4 +1,4 @@
-if(!require(spotifyr)){install.packages("spotifyr")}
+# if(!require(spotifyr)){install.packages("spotifyr")}
 library(spotifyr)
 library(dplyr)
 library(lubridate)
@@ -15,8 +15,9 @@ clean_api_call_output <- function(output_from_get_my_recently_played) {
   return(df)
 }
 
-access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
+access_token <- get_spotify_authorization_code(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
                                          client_secret = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
+
 
 file <- "./daily_listen/history.txt"
 
@@ -30,11 +31,10 @@ history <- history %>%
 
 start_time <- as.integer(max(history$played))*1000
 
-mytoken <- readRDS("secrets/my_secret")[[1]]
 
 output <- list(); ii <- 1
 repeat{
-  aux <- get_my_recently_played(authorization = mytoken,
+  aux <- get_my_recently_played(authorization = access_token,
                                 after = as.character(start_time), limit = 20)
   
   df <- clean_api_call_output(aux)
