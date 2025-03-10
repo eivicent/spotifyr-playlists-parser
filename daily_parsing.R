@@ -18,6 +18,7 @@ clean_api_call_output <- function(output_from_get_my_recently_played) {
 access_token <- get_spotify_authorization_code(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
                                          client_secret = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
 
+
 file <- "./daily_listen/history.txt"
 
 history <- read.table(file, header = T, sep = ";", quote = "")
@@ -28,7 +29,8 @@ history <- history %>%
   mutate(played = as.POSIXct(played, "GMT"),
          day = as.Date(day))
 
-start_time <- format(as.integer(max(history$played))*1000,scientific = F)
+start_time <- as.integer(max(history$played))*1000
+
 
 output <- list(); ii <- 1
 repeat{
