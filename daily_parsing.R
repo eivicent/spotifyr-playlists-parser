@@ -28,7 +28,7 @@ history <- history %>%
   mutate(played = as.POSIXct(played, "GMT"),
          day = as.Date(day))
 
-start_time <- as.integer(max(history$played))*1000
+start_time <- format(as.integer(max(history$played))*1000,scientific = F)
 
 mytoken <- readRDS("secrets/my_secret")[[1]]
 
