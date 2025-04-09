@@ -16864,3 +16864,4 @@
 "2025-04-08T16:43:22.078Z";"Big Apple Contest";"Eyal Vilner Big Band";"2025-04-08 16:43:22.078";"2025-04-08"
 "2025-04-08T16:47:28.539Z";"Big John's Special - Instrumental";"Benny Goodman";"2025-04-08 16:47:28.539";"2025-04-08"
 "2025-04-08T17:22:56.368Z";"I Can't Give You Anything but Love";"Stockholm Swing All Stars";"2025-04-08 17:22:56.368";"2025-04-08"
+"2025-04-08T20:14:10.692Z";"Sultans Of Swing - San Antonio Live In 85";"Dire Straits";"2025-04-08 20:14:10.692";"2025-04-08"
