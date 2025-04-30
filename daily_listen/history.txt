@@ -17362,3 +17362,5 @@
 "2025-04-29T16:43:59.799Z";"Cantiga de Montse";"Guillem Gisbert";"2025-04-29 16:43:59.799";"2025-04-29"
 "2025-04-29T16:48:01.129Z";"Sento";"El Petit De Cal Eril";"2025-04-29 16:48:01.129";"2025-04-29"
 "2025-04-29T18:02:34.725Z";"Teresa Rampell";"Manel";"2025-04-29 18:02:34.725";"2025-04-29"
+"2025-04-29T18:41:21.942Z";"I Heard It Through The Grapevine";"Creedence Clearwater Revival";"2025-04-29 18:41:21.942";"2025-04-29"
+"2025-04-29T18:45:09.728Z";"Listen to the Music";"The Doobie Brothers";"2025-04-29 18:45:09.728";"2025-04-29"
