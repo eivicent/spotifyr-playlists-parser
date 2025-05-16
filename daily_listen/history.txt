@@ -17617,7 +17617,7 @@
 "2025-05-15T06:22:13.219Z";"Levoton tuhkimo";"emma & matilda";"2025-05-15 06:22:13.219";"2025-05-15"
 "2025-05-15T06:47:22.272Z";"Get It On";"T. Rex";"2025-05-15 06:47:22.272";"2025-05-15"
 "2025-05-15T07:17:26.563Z";"Vogue";"Madonna";"2025-05-15 07:17:26.563";"2025-05-15"
-"2025-05-15T07:28:17.136Z";"Mozart: Symphony No. 41 in C Major, K. 551 \"Jupiter\": I. Allegro vivace";"Wolfgang Amadeus Mozart";"2025-05-15 07:28:17.136";"2025-05-15"
+"2025-05-15T07:28:17.136Z";"Mozart: Symphony No. 41 in C Major, K. 551 \Jupiter\: I. Allegro vivace";"Wolfgang Amadeus Mozart";"2025-05-15 07:28:17.136";"2025-05-15"
 "2025-05-15T10:58:33.247Z";"Un home realitzat";"Guillem Gisbert";"2025-05-15 10:58:33.247";"2025-05-15"
 "2025-05-15T12:26:00.454Z";"Cantiga de Montse";"Guillem Gisbert";"2025-05-15 12:26:00.454";"2025-05-15"
 "2025-05-15T17:46:45.856Z";"Hold On, I'm Comin'";"Sam & Dave";"2025-05-15 17:46:45.856";"2025-05-15"
