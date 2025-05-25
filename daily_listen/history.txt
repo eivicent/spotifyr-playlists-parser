@@ -17892,6 +17892,6 @@
 "2025-05-23T22:48:23.703Z";"Un Sonido (feat. Ivan Ferreiro)";"Fuel Fandango";"2025-05-23 22:48:23.703";"2025-05-23"
 "2025-05-23T22:51:39.132Z";"After";"Colectivo Da Silva";"2025-05-23 22:51:39.132";"2025-05-23"
 "2025-05-23T22:55:06.036Z";"Hortera";"Varry Brava";"2025-05-23 22:55:06.036";"2025-05-23"
-"2025-05-24T08:19:47.912Z";"Un Revés (from the Netflix Series \"Alma\")";"Anna Andreu";"2025-05-24 08:19:47.912";"2025-05-24"
+"2025-05-24T08:19:47.912Z";"Un Revés (from the Netflix Series \Alma\)";"Anna Andreu";"2025-05-24 08:19:47.912";"2025-05-24"
 "2025-05-24T11:18:37.037Z";"Descarga on Las Palmas";"Pucho and His Latin Soul Brothers";"2025-05-24 11:18:37.037";"2025-05-24"
 "2025-05-24T13:56:42.939Z";"Descarga on Las Palmas";"Pucho and His Latin Soul Brothers";"2025-05-24 13:56:42.939";"2025-05-24"
