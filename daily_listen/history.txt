@@ -18498,3 +18498,6 @@
 "2025-07-01T09:46:07.564Z";"The Very Thought Of You";"Pee Wee Russell";"2025-07-01 09:46:07.564";"2025-07-01"
 "2025-07-02T15:28:17.419Z";"On The Sunny Side Of The Street - Alt 1";"Illinois Jacquet";"2025-07-02 15:28:17.419";"2025-07-02"
 "2025-07-02T19:12:44.248Z";"Satin 'N' Lace";"Sonora Ponceña";"2025-07-02 19:12:44.248";"2025-07-02"
+"2025-07-03T13:06:43.241Z";"Motens Swing";"Lester's Blues";"2025-07-03 13:06:43.241";"2025-07-03"
+"2025-07-03T13:11:01.977Z";"Nobody Knows When You're Down And Out";"Lester's Blues";"2025-07-03 13:11:01.977";"2025-07-03"
+"2025-07-03T13:15:28.794Z";"Little White Lies";"Lester's Blues";"2025-07-03 13:15:28.794";"2025-07-03"
