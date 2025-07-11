@@ -18526,3 +18526,8 @@
 "2025-07-06T18:32:04.817Z";"Wet Dream";"Wet Leg";"2025-07-06 18:32:04.817";"2025-07-06"
 "2025-07-06T18:36:54.983Z";"The Bay";"Metronomy";"2025-07-06 18:36:54.983";"2025-07-06"
 "2025-07-07T03:15:25.336Z";"I Know How You Get";"Mk.gee";"2025-07-07 03:15:25.336";"2025-07-07"
+"2025-07-11T14:56:25.376Z";"I'm Beginning to See the Light";"Gentlemen & Gangsters";"2025-07-11 14:56:25.376";"2025-07-11"
+"2025-07-11T14:59:48.117Z";"Dance of the Lindy Blossoms";"Jonathan Stout and his Campus Five";"2025-07-11 14:59:48.117";"2025-07-11"
+"2025-07-11T15:03:37.210Z";"Tuxedo Junction (TRANKY-DOO)";"Giorgio Cùscito & Swing Valley Band";"2025-07-11 15:03:37.21";"2025-07-11"
+"2025-07-11T15:12:01.643Z";"Big Apple Contest";"The Solomon Douglas Swingtet";"2025-07-11 15:12:01.643";"2025-07-11"
+"2025-07-11T15:42:38.213Z";"Big John's Special";"Benny Goodman";"2025-07-11 15:42:38.213";"2025-07-11"
