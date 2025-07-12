@@ -18532,3 +18532,4 @@
 "2025-07-11T15:12:01.643Z";"Big Apple Contest";"The Solomon Douglas Swingtet";"2025-07-11 15:12:01.643";"2025-07-11"
 "2025-07-11T15:42:38.213Z";"Big John's Special";"Benny Goodman";"2025-07-11 15:42:38.213";"2025-07-11"
 "2025-07-11T21:54:00.734Z";"Big John's Special";"Benny Goodman";"2025-07-11 21:54:00.734";"2025-07-11"
+"2025-07-12T16:28:50.254Z";"Tiger Rag";"The Big Band Orchestra";"2025-07-12 16:28:50.254";"2025-07-12"
