@@ -18531,3 +18531,4 @@
 "2025-07-11T15:03:37.210Z";"Tuxedo Junction (TRANKY-DOO)";"Giorgio Cùscito & Swing Valley Band";"2025-07-11 15:03:37.21";"2025-07-11"
 "2025-07-11T15:12:01.643Z";"Big Apple Contest";"The Solomon Douglas Swingtet";"2025-07-11 15:12:01.643";"2025-07-11"
 "2025-07-11T15:42:38.213Z";"Big John's Special";"Benny Goodman";"2025-07-11 15:42:38.213";"2025-07-11"
+"2025-07-11T21:54:00.734Z";"Big John's Special";"Benny Goodman";"2025-07-11 21:54:00.734";"2025-07-11"
