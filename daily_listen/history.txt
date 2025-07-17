@@ -18591,7 +18591,7 @@
 "2025-07-16T12:27:14.487Z";"Cumbanchero";"Ruben Gonzalez";"2025-07-16 12:27:14.487";"2025-07-16"
 "2025-07-16T12:30:10.286Z";"Special del Bebo";"Bebo & Cachao";"2025-07-16 12:30:10.286";"2025-07-16"
 "2025-07-16T12:33:54.346Z";"Hong Kong Mambo";"Tito Puente";"2025-07-16 12:33:54.346";"2025-07-16"
-"2025-07-16T12:36:54.518Z";"Chinatown (feat. Carlos \"Patato\" Valdez & Tito Puente)";"Jose Mangual";"2025-07-16 12:36:54.518";"2025-07-16"
+"2025-07-16T12:36:54.518Z";"Chinatown (feat. Carlos \Patato\ Valdez & Tito Puente)";"Jose Mangual";"2025-07-16 12:36:54.518";"2025-07-16"
 "2025-07-16T12:40:20.530Z";"Maria Cervantes";"Noro Morales";"2025-07-16 12:40:20.53";"2025-07-16"
 "2025-07-16T12:43:17.203Z";"Prelude Ala Cha Cha";"Woody Herman";"2025-07-16 12:43:17.203";"2025-07-16"
 "2025-07-16T12:44:12.760Z";"Con Mi Guaguancó";"La Playa Sextet";"2025-07-16 12:44:12.76";"2025-07-16"
