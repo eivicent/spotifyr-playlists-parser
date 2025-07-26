@@ -18825,3 +18825,8 @@
 "2025-07-25T18:24:25.700Z";"After the Rain";"Mark Towns";"2025-07-25 18:24:25.7";"2025-07-25"
 "2025-07-25T18:27:34.573Z";"Special del Bebo";"Bebo & Cachao";"2025-07-25 18:27:34.573";"2025-07-25"
 "2025-07-25T18:33:56.614Z";"Habana del Este";"Afro-Cuban All Stars";"2025-07-25 18:33:56.614";"2025-07-25"
+"2025-07-25T18:38:43.697Z";"Tumbao de coqueta";"¡Cubanismo!";"2025-07-25 18:38:43.697";"2025-07-25"
+"2025-07-25T18:43:28.256Z";"El Ruso";"Daymé Arocena";"2025-07-25 18:43:28.256";"2025-07-25"
+"2025-07-25T18:51:06.940Z";"Moonlight Serenade";"Juan Pablo Torres";"2025-07-25 18:51:06.94";"2025-07-25"
+"2025-07-25T18:53:38.322Z";"Nuestra Canción - Instrumental";"Ruben Gonzalez";"2025-07-25 18:53:38.322";"2025-07-25"
+"2025-07-25T18:57:05.952Z";"Las Trompetas Se Divierten";"Gran Afro Cuban Orchestra de Generoso Jimenez";"2025-07-25 18:57:05.952";"2025-07-25"
