@@ -60,7 +60,7 @@ get_latest_timestamp <- function() {
   latest_timestamp <- NULL
   
   for (date in rev(recent_dates)) {
-    file_path <- paste0("./daily_listen/", date, ".csv")
+    file_path <- paste0("./data/daily/", date, ".csv")
     if (file.exists(file_path)) {
       df <- read_daily_file_safe(file_path)
       if (nrow(df) > 0) {
@@ -72,7 +72,7 @@ get_latest_timestamp <- function() {
   
   # Fallback: try to read from history.txt if no daily files found
   if (is.null(latest_timestamp)) {
-    history_file <- "./daily_listen/history.txt"
+    history_file <- "./data/daily/history.txt"
     if (file.exists(history_file)) {
       cat("No recent daily files found, reading from history.txt...\n")
       # Read last few lines to get latest timestamp
@@ -145,7 +145,7 @@ if (length(output) == 0) {
   
   for (daily_data in daily_groups) {
     current_day <- daily_data$day[1]
-    file_path <- paste0("./daily_listen/", current_day, ".csv")
+    file_path <- paste0("./data/daily/", current_day, ".csv")
     
     # Read existing data for this day if it exists
     existing_data <- read_daily_file_safe(file_path)
@@ -173,6 +173,6 @@ if (length(output) == 0) {
   }
   
   cat("\nDaily parsing completed successfully!\n")
-  cat("Data is now stored in individual daily files in ./daily_listen/\n")
+  cat("Data is now stored in individual daily files in ./data/daily/\n")
   cat("Special characters in song names are properly escaped.\n")
 }

@@ -59,7 +59,7 @@ get_latest_timestamp_json <- function() {
   latest_timestamp <- NULL
   
   for (date in rev(recent_dates)) {
-    file_path <- paste0("./daily_listen/", date, ".json")
+    file_path <- paste0("./data/daily/", date, ".json")
     if (file.exists(file_path)) {
       df <- read_daily_json_safe(file_path)
       if (nrow(df) > 0) {
@@ -126,7 +126,7 @@ if (length(output) == 0) {
   
   for (daily_data in daily_groups) {
     current_day <- daily_data$day[1]
-    file_path <- paste0("./daily_listen/", current_day, ".json")
+    file_path <- paste0("./data/daily/", current_day, ".json")
     
     # Read existing data for this day if it exists
     existing_data <- read_daily_json_safe(file_path)
@@ -154,6 +154,6 @@ if (length(output) == 0) {
   }
   
   cat("\nDaily parsing completed successfully!\n")
-  cat("Data is now stored in individual daily JSON files in ./daily_listen/\n")
+  cat("Data is now stored in individual daily JSON files in ./data/daily/\n")
   cat("JSON format completely avoids CSV parsing issues with special characters.\n")
 } 

@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
           
       - name: Decrypt large secret
-        run: ./decrypt_secret.sh
+        run: ./src/utils/decrypt_secret.sh
         shell: bash
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
@@ -32,13 +32,13 @@ jobs:
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-        run: Rscript daily_parsing.R
+        run: Rscript src/scripts/daily_parsing.R
         
       - name: Commit files
         run: |
           git config --local user.name github-actions
           git config --local user.email "actions@github.com"
-          git add ./daily_listen/history.txt
+          git add ./data/daily/history.txt
           git commit -am "Daily parsing commit on $(date)"
           git push origin main
         env:

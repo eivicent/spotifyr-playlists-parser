@@ -18,7 +18,7 @@ clean_api_call_output <- function(output_from_get_my_recently_played) {
 access_token <- get_spotify_access_token(client_id = Sys.getenv("SPOTIFY_CLIENT_ID"),
                                          client_secret = Sys.getenv("SPOTIFY_CLIENT_SECRET"))
 
-file <- "./daily_listen/history.txt"
+file <- "./data/daily/history.txt"
 
 history <- read.table(file, header = T, sep = ";", quote = "")
 names(history) <- c("played_at", "track.name","name", "played", "day")
