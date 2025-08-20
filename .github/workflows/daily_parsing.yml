@@ -40,20 +40,9 @@ jobs:
           git config --local user.email "actions@github.com"
           
           # Add all CSV files in data/daily/ directory
-          git add ./data/daily/*.csv
-          
-          # Add history.txt if it exists
-          if [ -f "./data/daily/history.txt" ]; then
-            git add ./data/daily/history.txt
-          fi
-          
-          # Check if there are any changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Daily parsing commit on $(date)"
-            git push origin main
-          fi
+          git add ./data/daily/*.csv        
+          git commit -m "Daily parsing commit on $(date)"
+          git push origin main
         env:
           REPO_KEY: ${{secrets.GITHUB_TOKEN}}
           username: github-actions
