@@ -1,82 +1,64 @@
-# Spotify Playlists Parser
+# Spotify Listening Dashboard
 
-A comprehensive project to parse and analyze personal Spotify playlists and store historical recommendations.
+A comprehensive dashboard for analyzing personal Spotify listening habits, built with Quarto and R.
 
-## Project Structure
+## 🎵 Features
+
+- **Daily Listening Patterns**: Track your daily song consumption over time
+- **Monthly Summaries**: Analyze monthly trends and averages  
+- **Weekly Patterns**: Discover your listening habits by day of the week
+- **Recent Activity**: View your most recent listening activity
+- **Comprehensive Statistics**: Detailed metrics about your listening behavior
+
+## 🚀 Live Dashboard
+
+Visit the live dashboard: [https://vicent.boned.github.io/spotifyr-playlists-parser/](https://vicent.boned.github.io/spotifyr-playlists-parser/)
+
+## 📊 Data Structure
+
+The dashboard processes daily CSV files from your Spotify listening history:
 
 ```
-spotifyr-playlists-parser/
-├── src/                    # Source code
-│   ├── scripts/           # R scripts for data processing
-│   │   ├── daily_parsing.R
-│   │   ├── daily_parsing_json.R
-│   │   └── daily_parsing_original.R
-│   └── utils/             # Utility functions
-│       └── decrypt_secret.sh
-├── data/                  # All data files
-│   ├── daily/            # Daily listening data (CSV files)
-│   ├── weekly/           # Weekly discover data (CSV files)
-│   └── raw/              # Raw data files
-├── dashboard/             # Dashboard files
-│   ├── static/           # Static assets (CSS, JS, images)
-│   ├── templates/        # HTML templates
-│   │   ├── dashboard.html
-│   │   └── dashboard.qmd
-│   ├── libs/             # Library files
-│   └── figure-html/      # Generated figures
-├── config/               # Configuration files
-│   ├── .httr-oauth       # OAuth credentials
-│   └── my_secret.gpg     # Encrypted secrets
-├── docs/                 # Documentation
-│   ├── WORKFLOW_IMPROVEMENTS.md
-│   └── IMPROVEMENTS_SUMMARY.md
-├── .github/              # GitHub workflows
-├── .gitignore
-├── README.md
-└── spotifyr-playlists-parser.Rproj
+data/
+├── daily/           # Daily listening data (CSV files)
+│   ├── 2023-08-08.csv
+│   ├── 2023-08-09.csv
+│   └── ...
+└── weekly/          # Weekly discover data (CSV files)
 ```
 
-## Directory Descriptions
+Each daily CSV file contains:
+- `played_at`: Timestamp when the song was played
+- `track.name`: Name of the track
+- `name`: Artist name
+- `played`: Formatted timestamp
+- `day`: Date of listening
 
-### `src/`
-Contains all source code for the project:
-- **`scripts/`**: R scripts for data processing and analysis
-- **`utils/`**: Utility scripts and helper functions
+## 🛠️ Technical Details
 
-### `data/`
-Organized data storage:
-- **`daily/`**: Daily listening history data in CSV format
-- **`weekly/`**: Weekly discover playlist data in CSV format
-- **`raw/`**: Raw data files before processing
+- **Framework**: Quarto (R Markdown)
+- **Visualization**: ggplot2, gt tables
+- **Deployment**: GitHub Pages with GitHub Actions
+- **Styling**: Custom CSS with Spotify brand colors
 
-### `dashboard/`
-Dashboard and visualization components:
-- **`templates/`**: HTML and Quarto templates for the dashboard
-- **`static/`**: Static assets (CSS, JavaScript, images)
-- **`libs/`**: External libraries and dependencies
-- **`figure-html/`**: Generated figures and charts
+## 📈 Dashboard Sections
 
-### `config/`
-Configuration and credential files:
-- OAuth tokens for Spotify API
-- Encrypted secret files
+1. **Value Boxes**: Key statistics at a glance
+2. **Daily Song Count**: Time series visualization
+3. **Monthly Summary**: Trends and averages by month
+4. **Weekly Patterns**: Day-of-week analysis
+5. **Recent Activity**: Last 30 days of listening
+6. **Summary Statistics**: Comprehensive metrics
 
-### `docs/`
-Project documentation and improvement notes
+## 🔧 Local Development
 
-## Getting Started
+To run the dashboard locally:
 
-1. Ensure you have R and the required packages installed
-2. Set up your Spotify API credentials in the `config/` directory
-3. Run the data processing scripts from `src/scripts/`
-4. Generate the dashboard using the templates in `dashboard/templates/`
+1. Clone the repository
+2. Install R and required packages
+3. Run `quarto render` to build the site
+4. Open `docs/index.html` in your browser
 
-## Data Processing
+## 📝 License
 
-The project processes two main types of Spotify data:
-- **Daily listening history**: Tracks your daily listening patterns
-- **Weekly discover playlists**: Analyzes your weekly discover recommendations
-
-## Dashboard
-
-The dashboard provides visualizations and insights into your listening patterns and playlist recommendations.
+This project is for personal use and educational purposes.

@@ -1,0 +1,34 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Spotify Listening Dashboard"
+  description: "Personal Spotify listening analytics and insights"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: dashboard.qmd
+        text: Dashboard
+    right:
+      - icon: github
+        href: https://github.com/vicent.boned/spotifyr-playlists-parser
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-tools: true
+    css: styles.css
+    self-contained: true
+
+execute:
+  echo: false
+  warning: false
+  message: false
+
+
+
