@@ -22,7 +22,6 @@ format:
     toc-depth: 2
     code-fold: true
     code-tools: true
-    self-contained: true
     css: styles.css
 
 execute:

@@ -25,10 +25,19 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.3'
+          use-public-rspm: true
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/renv/cache
+          key: ${{ runner.os }}-r-packages-${{ hashFiles('**/DESCRIPTION') }}
+          restore-keys: |
+            ${{ runner.os }}-r-packages-
 
       - name: Install R packages
         run: |
-          Rscript -e "install.packages(c('tidyverse', 'lubridate', 'gt', 'patchwork', 'here', 'shiny', 'bslib'), repos = 'https://cran.rstudio.com/')"
+          Rscript -e "install.packages(c('tidyverse', 'lubridate', 'gt', 'patchwork', 'here', 'shiny', 'bslib'), repos = 'https://cran.rstudio.com/', Ncpus = 2)"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
