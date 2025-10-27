@@ -1,6 +1,6 @@
 ---
-title: "Daily Listening Dashboard"
-description: "Comprehensive analysis of your Spotify listening patterns"
+title: "Listening Summary"
+description: "Overview of your Spotify listening patterns and trends"
 ---
 
 ```{r setup}
@@ -36,13 +36,21 @@ read_daily_file <- function(file_path) {
     date_str <- basename(file_path) %>% 
       str_remove("\\.csv$")
     
-    # Count songs for this day
+    # Calculate metrics for this day
     song_count <- nrow(daily_data)
+    unique_artists <- length(unique(daily_data$name))
+    unique_tracks <- length(unique(daily_data$track.name))
     
-    # Return summary
+    # Estimate minutes listened (assuming average 3.5 minutes per song)
+    estimated_minutes <- song_count * 3.5
+    
+    # Return comprehensive summary
     data.frame(
       date = as.Date(date_str),
       songs = song_count,
+      unique_artists = unique_artists,
+      unique_tracks = unique_tracks,
+      estimated_minutes = estimated_minutes,
       file = basename(file_path)
     )
   } else {
@@ -58,7 +66,10 @@ daily_summary <- map_dfr(daily_files, read_daily_file) %>%
 # Create value boxes for key statistics
 total_days <- nrow(daily_summary)
 total_songs <- sum(daily_summary$songs)
+total_minutes <- sum(daily_summary$estimated_minutes)
+total_hours <- round(total_minutes / 60, 1)
 avg_songs <- round(mean(daily_summary$songs), 1)
+avg_minutes <- round(mean(daily_summary$estimated_minutes), 1)
 date_range <- paste(min(daily_summary$date), "to", max(daily_summary$date))
 
 # Display value boxes
@@ -77,28 +88,42 @@ value_box(
 )
 
 value_box(
+  title = "Total Hours",
+  value = paste(total_hours, "hrs"),
+  showcase = "⏱️",
+  theme = "info"
+)
+
+value_box(
   title = "Avg Songs/Day",
   value = avg_songs,
   showcase = "📊",
-  theme = "info"
+  theme = "secondary"
+)
+
+value_box(
+  title = "Avg Minutes/Day",
+  value = paste(avg_minutes, "min"),
+  showcase = "⏰",
+  theme = "warning"
 )
 
 value_box(
   title = "Date Range",
   value = date_range,
   showcase = "📆",
-  theme = "secondary"
+  theme = "dark"
 )
 ```
 
-## Daily Song Count Visualization
+## Daily Listening Patterns
 
-```{r daily-plot}
+```{r daily-plots}
 #| fig-width: 12
-#| fig-height: 6
+#| fig-height: 8
 
-# Create the main plot with improved date formatting
-p <- daily_summary %>%
+# Create songs plot
+p1 <- daily_summary %>%
   ggplot(aes(x = date, y = songs)) +
   geom_line(color = "#1DB954", size = 1) +
   geom_point(color = "#1DB954", size = 1.5, alpha = 0.7) +
@@ -112,9 +137,9 @@ p <- daily_summary %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 16, face = "bold"),
-    plot.subtitle = element_text(size = 12, color = "gray60"),
-    axis.title = element_text(size = 12),
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 10, color = "gray60"),
+    axis.title = element_text(size = 10),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank()
   ) +
@@ -123,10 +148,39 @@ p <- daily_summary %>%
     date_breaks = "2 months",
     date_minor_breaks = "1 month"
   ) +
-  scale_y_continuous(breaks = scales::pretty_breaks(n = 8))
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 6))
 
-# Display the plot
-p
+# Create minutes plot
+p2 <- daily_summary %>%
+  ggplot(aes(x = date, y = estimated_minutes)) +
+  geom_line(color = "#1DB954", size = 1) +
+  geom_point(color = "#1DB954", size = 1.5, alpha = 0.7) +
+  geom_smooth(method = "loess", color = "#FF6B6B", size = 1, se = TRUE, alpha = 0.3) +
+  labs(
+    title = "Daily Minutes Listened",
+    subtitle = "Estimated based on average song length (3.5 min)",
+    x = "Date",
+    y = "Minutes",
+    caption = "Estimated duration"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 10, color = "gray60"),
+    axis.title = element_text(size = 10),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  scale_x_date(
+    date_labels = "%b %Y", 
+    date_breaks = "2 months",
+    date_minor_breaks = "1 month"
+  ) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 6))
+
+# Combine plots
+library(patchwork)
+p1 / p2
 ```
 
 ## Monthly Summary
@@ -142,8 +196,11 @@ monthly_summary <- daily_summary %>%
   group_by(year_month) %>%
   summarise(
     total_songs = sum(songs),
+    total_minutes = sum(estimated_minutes),
+    total_hours = round(total_minutes / 60, 1),
     days_listened = n(),
     avg_songs_per_day = round(mean(songs), 2),
+    avg_minutes_per_day = round(mean(estimated_minutes), 1),
     .groups = "drop"
   ) %>%
   arrange(year_month)
@@ -178,29 +235,39 @@ monthly_summary %>%
   mutate(
     year_month = format(year_month, "%Y-%m")
   ) %>%
+  select(year_month, total_songs, total_hours, days_listened, avg_songs_per_day, avg_minutes_per_day) %>%
   gt() %>%
   tab_header(
     title = "Monthly Listening Summary",
-    subtitle = "Total songs, days listened, and average per day by month"
+    subtitle = "Songs, hours, days listened, and daily averages by month"
   ) %>%
   cols_label(
     year_month = "Month",
     total_songs = "Total Songs",
+    total_hours = "Total Hours",
     days_listened = "Days Listened",
-    avg_songs_per_day = "Avg Songs/Day"
+    avg_songs_per_day = "Avg Songs/Day",
+    avg_minutes_per_day = "Avg Min/Day"
   ) %>%
   fmt_number(
-    columns = c(total_songs, avg_songs_per_day),
+    columns = c(total_songs, avg_songs_per_day, avg_minutes_per_day),
     decimals = 0
   ) %>%
   fmt_number(
-    columns = days_listened,
-    decimals = 0
+    columns = c(total_hours, days_listened),
+    decimals = 1
   ) %>%
   data_color(
     columns = total_songs,
     colors = scales::col_numeric(
       palette = c("#FFE5E5", "#FF6B6B"),
+      domain = NULL
+    )
+  ) %>%
+  data_color(
+    columns = total_hours,
+    colors = scales::col_numeric(
+      palette = c("#E5F3FF", "#1DB954"),
       domain = NULL
     )
   ) %>%

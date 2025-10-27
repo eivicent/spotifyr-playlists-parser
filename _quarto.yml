@@ -9,8 +9,8 @@ website:
     left:
       - href: index.html
         text: Home
-      - href: dashboard.html
-        text: Dashboard
+      - href: summary.html
+        text: Summary
     right:
       - icon: github
         href: https://github.com/vicent.boned/spotifyr-playlists-parser
