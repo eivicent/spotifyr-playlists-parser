@@ -7,14 +7,13 @@ website:
   description: "Personal Spotify listening analytics and insights"
   navbar:
     left:
-      - href: index.qmd
+      - href: index.html
         text: Home
-      - href: dashboard.qmd
+      - href: dashboard.html
         text: Dashboard
     right:
       - icon: github
         href: https://github.com/vicent.boned/spotifyr-playlists-parser
-  include-in-header: styles.css
 
 format:
   html:
@@ -24,6 +23,7 @@ format:
     code-fold: true
     code-tools: true
     self-contained: true
+    css: styles.css
 
 execute:
   echo: false

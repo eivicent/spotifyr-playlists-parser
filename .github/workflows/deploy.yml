@@ -28,7 +28,7 @@ jobs:
 
       - name: Install R packages
         run: |
-          install.packages(c("tidyverse", "lubridate", "gt", "patchwork", "here", "shiny", "bslib"), repos = "https://cran.rstudio.com/")
+          Rscript -e "install.packages(c('tidyverse', 'lubridate', 'gt', 'patchwork', 'here', 'shiny', 'bslib'), repos = 'https://cran.rstudio.com/')"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2

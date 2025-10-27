@@ -48,3 +48,5 @@ rsconnect/
 
 # Secrets directory
 secrets/
+
+/.quarto/
