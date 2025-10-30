@@ -1,0 +1,79 @@
+/* Custom styles for Spotify Dashboard */
+
+/* Spotify brand colors */
+:root {
+  --spotify-green: #1DB954;
+  --spotify-black: #191414;
+  --spotify-white: #FFFFFF;
+  --spotify-gray: #B3B3B3;
+}
+
+/* Header styling */
+.navbar-brand {
+  font-weight: bold;
+  color: var(--spotify-green) !important;
+}
+
+/* Value boxes styling */
+.value-box {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Plot styling */
+.plot-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Table styling */
+.gt_table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Custom button styling */
+.btn-primary {
+  background-color: var(--spotify-green);
+  border-color: var(--spotify-green);
+}
+
+.btn-primary:hover {
+  background-color: #1ed760;
+  border-color: #1ed760;
+}
+
+/* Footer styling */
+.footer {
+  background-color: var(--spotify-black);
+  color: var(--spotify-white);
+  padding: 20px 0;
+  margin-top: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .value-box {
+    margin-bottom: 15px;
+  }
+  
+  .plot-container {
+    padding: 10px;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.plot-container {
+  animation: fadeIn 0.6s ease-out;
+}
+
+
+

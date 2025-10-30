@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Spotify Listening Dashboard",
+    "section": "",
+    "text": "This dashboard provides comprehensive insights into your personal Spotify listening habits, including daily patterns, monthly trends, and weekly listening behaviors.\n\n\n\nDaily Listening Patterns: Track your daily song consumption over time\nMonthly Summaries: Analyze monthly trends and averages\nWeekly Patterns: Discover your listening habits by day of the week\nRecent Activity: View your most recent listening activity\nComprehensive Statistics: Detailed metrics about your listening behavior\n\n\n\n\nNavigate to the Dashboard to explore your listening data and discover insights about your music consumption patterns.\n\nData is automatically updated from your Spotify listening history"
+  },
+  {
+    "objectID": "index.html#features",
+    "href": "index.html#features",
+    "title": "Spotify Listening Dashboard",
+    "section": "",
+    "text": "Daily Listening Patterns: Track your daily song consumption over time\nMonthly Summaries: Analyze monthly trends and averages\nWeekly Patterns: Discover your listening habits by day of the week\nRecent Activity: View your most recent listening activity\nComprehensive Statistics: Detailed metrics about your listening behavior"
+  },
+  {
+    "objectID": "index.html#getting-started",
+    "href": "index.html#getting-started",
+    "title": "Spotify Listening Dashboard",
+    "section": "",
+    "text": "Navigate to the Dashboard to explore your listening data and discover insights about your music consumption patterns.\n\nData is automatically updated from your Spotify listening history"
+  },
+  {
+    "objectID": "summary.html",
+    "href": "summary.html",
+    "title": "Listening Summary",
+    "section": "",
+    "text": "📅\n\nTotal Days\n715\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,708\n\n\n\n\n\n\n\n\n\n\n⏱️\n\nTotal Hours\n1208 hrs\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n29\n\n\n\n\n\n\n\n\n\n\n⏰\n\nAvg Minutes/Day\n101.4 min\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-10-27"
+  },
+  {
+    "objectID": "summary.html#data-processing",
+    "href": "summary.html#data-processing",
+    "title": "Listening Summary",
+    "section": "",
+    "text": "📅\n\nTotal Days\n715\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,708\n\n\n\n\n\n\n\n\n\n\n⏱️\n\nTotal Hours\n1208 hrs\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n29\n\n\n\n\n\n\n\n\n\n\n⏰\n\nAvg Minutes/Day\n101.4 min\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-10-27"
+  },
+  {
+    "objectID": "summary.html#daily-listening-patterns",
+    "href": "summary.html#daily-listening-patterns",
+    "title": "Listening Summary",
+    "section": "Daily Listening Patterns",
+    "text": "Daily Listening Patterns"
+  },
+  {
+    "objectID": "summary.html#monthly-summary",
+    "href": "summary.html#monthly-summary",
+    "title": "Listening Summary",
+    "section": "Monthly Summary",
+    "text": "Monthly Summary\n\n\n\n\n\n\n\n\n\n\n\n\nMonthly Listening Summary\nSongs, hours, days listened, and daily averages by month"
+  },
+  {
+    "objectID": "summary.html#weekly-patterns",
+    "href": "summary.html#weekly-patterns",
+    "title": "Listening Summary",
+    "section": "Weekly Patterns",
+    "text": "Weekly Patterns"
+  },
+  {
+    "objectID": "summary.html#recent-activity",
+    "href": "summary.html#recent-activity",
+    "title": "Listening Summary",
+    "section": "Recent Activity",
+    "text": "Recent Activity\n\n\n\n\n\nRecent Listening Activity\nLast 30 days of listening data"
+  },
+  {
+    "objectID": "summary.html#summary-statistics",
+    "href": "summary.html#summary-statistics",
+    "title": "Listening Summary",
+    "section": "Summary Statistics",
+    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-10-27"
+  }
+]
