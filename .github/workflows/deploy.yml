@@ -34,7 +34,7 @@ jobs:
 
       - name: Install R packages
         run: |
-          Rscript -e "install.packages(c('ggplot2', 'dplyr', 'purrr', 'tidyr', 'lubridate', 'gt', 'patchwork', 'here', 'bslib', 'scales'), repos = 'https://cran.rstudio.com/', Ncpus = 2, dependencies = TRUE)"
+          Rscript -e "install.packages(c('ggplot2', 'dplyr', 'purrr', 'tidyr', 'stringr', 'lubridate', 'gt', 'patchwork', 'here', 'bslib', 'scales'), repos = 'https://cran.rstudio.com/', Ncpus = 2, dependencies = TRUE)"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2

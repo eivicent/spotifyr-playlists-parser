@@ -7,13 +7,16 @@ description: "Overview of your Spotify listening patterns and trends"
 #| message: false
 #| warning: false
 
-# Load required libraries
-library(tidyverse)
+# Load required libraries (avoid tidyverse; use smaller packages)
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
 library(lubridate)
 library(gt)
 library(patchwork)
 library(here)
-library(shiny)
 library(bslib)
 ```
 
