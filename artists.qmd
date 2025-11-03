@@ -1,0 +1,212 @@
+---
+title: "Artists Analysis"
+description: "Top artists and listening streaks"
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+
+# Load required libraries
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(lubridate)
+library(gt)
+library(here)
+library(bslib)
+```
+
+```{r load-artist-data}
+#| message: false
+#| warning: false
+
+# Get list of all daily CSV files
+daily_files <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
+
+# Function to read and process a single daily file
+read_daily_file <- function(file_path) {
+  if (file.exists(file_path)) {
+    # Read the CSV file
+    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
+    
+    # Extract date from filename as fallback
+    date_str <- basename(file_path) %>% 
+      str_remove("\\.csv$")
+    
+    # Use day column if available, otherwise try played_at, otherwise use filename
+    if ("day" %in% colnames(daily_data) && !all(is.na(daily_data$day))) {
+      daily_data$date <- as.Date(daily_data$day)
+    } else if ("played_at" %in% colnames(daily_data)) {
+      # Parse played_at timestamp to get date
+      daily_data$date <- as.Date(substr(daily_data$played_at, 1, 10))
+    } else {
+      daily_data$date <- as.Date(date_str)
+    }
+    
+    # Select relevant columns (name is artist, day or date for the date)
+    artist_data <- daily_data %>%
+      select(name, date, track.name) %>%
+      filter(!is.na(name), !is.na(date)) %>%
+      rename(song = track.name)
+    
+    return(artist_data)
+  } else {
+    return(NULL)
+  }
+}
+
+# Process all daily files
+all_artist_data <- map_dfr(daily_files, read_daily_file) %>%
+  arrange(date) %>%
+  filter(!is.na(date), !is.na(name)) %>%
+  distinct()  # Remove duplicates
+
+# Create year-month column for grouping
+all_artist_data <- all_artist_data %>%
+  mutate(
+    year_month = floor_date(date, "month"),
+    year_month_str = format(year_month, "%Y-%m")
+  )
+```
+
+## Top 5 Artists - Current Month
+
+```{r top-artists-current-month}
+#| message: false
+
+# Get current month
+current_month <- floor_date(Sys.Date(), "month")
+
+# Filter data for current month
+current_month_data <- all_artist_data %>%
+  filter(year_month == current_month)
+
+# Calculate top 5 artists by play count
+top_5_current_month <- current_month_data %>%
+  select(name, date) %>% unique() %>% 
+  count(name, sort = TRUE) %>%
+  head(5) %>%
+  mutate(rank = row_number()) %>%
+  select(rank, artist = name, plays = n)
+
+# Display top 5 artists for current month
+if (nrow(top_5_current_month) > 0) {
+  top_5_current_month %>%
+    gt() %>%
+    tab_header(
+      title = paste("Top 5 Artists -", format(current_month, "%B %Y")),
+      subtitle = "Artists with the most days played this month"
+    ) %>%
+    cols_label(
+      rank = "Rank",
+      artist = "Artist",
+      plays = "Days played"
+    ) %>%
+    fmt_number(
+      columns = plays,
+      decimals = 0
+    ) %>%
+    data_color(
+      columns = plays,
+      fn = scales::col_numeric(
+        palette = c("#E5F3FF", "#1DB954"),
+        domain = NULL
+      )
+    ) %>%
+    opt_interactive(use_search = FALSE)
+} else {
+  cat("No data available for the current month.")
+}
+```
+
+## Top 5 Artists by Longest Streak
+
+```{r top-artists-streak}
+#| message: false
+
+# Calculate streaks for each artist
+# For each artist, find all unique year-months they were listened to
+artist_months <- all_artist_data %>%
+  distinct(name, year_month) %>%
+  arrange(name, year_month)
+
+# Function to calculate longest consecutive streak for a single artist
+calculate_streak <- function(artist_name) {
+  artist_data <- artist_months %>%
+    filter(name == artist_name) %>%
+    arrange(year_month) %>%
+    distinct(year_month)  # Ensure unique months
+  
+  if (nrow(artist_data) == 0) return(0)
+  if (nrow(artist_data) == 1) return(1)
+  
+  # Calculate month gaps (using month arithmetic)
+  artist_data <- artist_data %>%
+    mutate(
+      prev_month = lag(year_month),
+      months_diff = case_when(
+        is.na(prev_month) ~ 0,
+        TRUE ~ as.numeric(interval(prev_month, year_month) / months(1))
+      ),
+      # Start new streak on first row or when gap is more than 1 month
+      streak_start = row_number() == 1 | months_diff != 1,
+      streak_id = cumsum(streak_start)
+    )
+  
+  # Calculate streak lengths
+  streak_lengths <- artist_data %>%
+    group_by(streak_id) %>%
+    summarise(streak_length = n(), .groups = "drop")
+  
+  # Return maximum streak
+  max_streak <- max(streak_lengths$streak_length, na.rm = TRUE)
+  return(max_streak)
+}
+
+# Calculate streaks for all artists
+artist_streaks <- artist_months %>%
+  distinct(name) %>%
+  mutate(
+    longest_streak = map_dbl(name, calculate_streak)
+  ) %>%
+  arrange(desc(longest_streak), name)
+
+# Get top 5 artists by longest streak
+top_5_streak <- artist_streaks %>%
+  head(5) %>%
+  mutate(rank = row_number()) %>%
+  select(rank, artist = name, streak_months = longest_streak)
+
+# Display top 5 artists by streak
+top_5_streak %>%
+  gt() %>%
+  tab_header(
+    title = "Top 5 Artists by Longest Consecutive Streak",
+    subtitle = "Artists with the longest streak of consecutive months listened to"
+  ) %>%
+  cols_label(
+    rank = "Rank",
+    artist = "Artist",
+    streak_months = "Consecutive Months"
+  ) %>%
+  fmt_number(
+    columns = streak_months,
+    decimals = 0
+  ) %>%
+  data_color(
+    columns = streak_months,
+    fn = scales::col_numeric(
+      palette = c("#FFE5E5", "#FF6B6B"),
+      domain = NULL
+    )
+  ) %>%
+  opt_interactive(use_search = FALSE)
+```
+
+---
+
+*Last updated on `r Sys.Date()`*
+

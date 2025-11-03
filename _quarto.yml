@@ -11,9 +11,11 @@ website:
         text: Home
       - href: summary.html
         text: Summary
+      - href: artists.html
+        text: Artists
     right:
       - icon: github
-        href: https://github.com/vicent.boned/spotifyr-playlists-parser
+        href: https://github.com/eivicent/spotifyr-playlists-parser
 
 format:
   html:

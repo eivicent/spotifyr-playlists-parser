@@ -4,15 +4,12 @@ A comprehensive dashboard for analyzing personal Spotify listening habits, built
 
 ## 🎵 Features
 
-- **Daily Listening Patterns**: Track your daily song consumption over time
-- **Monthly Summaries**: Analyze monthly trends and averages  
-- **Weekly Patterns**: Discover your listening habits by day of the week
-- **Recent Activity**: View your most recent listening activity
-- **Comprehensive Statistics**: Detailed metrics about your listening behavior
+- **Summary**: Overview of your Spotify listening patterns and trends
+- **Artists**: Top artists analysis and listening streaks
 
 ## 🚀 Live Dashboard
 
-Visit the live dashboard: [https://vicent.boned.github.io/spotifyr-playlists-parser/](https://vicent.boned.github.io/spotifyr-playlists-parser/)
+Visit the live dashboard: [https://eivicent.github.io/spotifyr-playlists-parser/](https://eivicent.github.io/spotifyr-playlists-parser/)
 
 ## 📊 Data Structure
 
@@ -41,14 +38,10 @@ Each daily CSV file contains:
 - **Deployment**: GitHub Pages with GitHub Actions
 - **Styling**: Custom CSS with Spotify brand colors
 
-## 📈 Dashboard Sections
+## 📈 Dashboard Pages
 
-1. **Value Boxes**: Key statistics at a glance
-2. **Daily Song Count**: Time series visualization
-3. **Monthly Summary**: Trends and averages by month
-4. **Weekly Patterns**: Day-of-week analysis
-5. **Recent Activity**: Last 30 days of listening
-6. **Summary Statistics**: Comprehensive metrics
+1. **Summary**: Listening patterns, trends, and comprehensive statistics
+2. **Artists**: Top artists, listening streaks, and artist analysis
 
 ## 🔧 Local Development
 
