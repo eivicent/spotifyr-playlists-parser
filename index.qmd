@@ -1,9 +1,10 @@
 ---
 title: "Spotify Listening Dashboard"
-description: "Personal Spotify listening analytics and insights"
+format:
+  html:
+    theme: cosmo
+    toc: false
 ---
-
-# Welcome to Your Spotify Listening Dashboard
 
 This dashboard provides comprehensive insights into your personal Spotify listening habits.
 
@@ -12,13 +13,9 @@ This dashboard provides comprehensive insights into your personal Spotify listen
 - **Summary**: Overview of your Spotify listening patterns and trends
 - **Artists**: Top artists analysis and listening streaks
 
-## Getting Started
-
-Navigate to the [Summary](summary.html) page to explore your listening data, or check out your [Artists](artists.html) page to discover insights about your favorite artists.
-
 ---
 
-*Data is automatically updated from your Spotify listening history*
+*Data is automatically updated daily from my Spotify listening history*
 
 
 

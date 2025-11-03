@@ -1,4 +1,4 @@
-# Spotify Listening Dashboard
+# My personal Spotify Listening Dashboard
 
 A comprehensive dashboard for analyzing personal Spotify listening habits, built with Quarto and R.
 

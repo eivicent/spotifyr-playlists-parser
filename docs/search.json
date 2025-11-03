@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Spotify Listening Dashboard",
     "section": "",
-    "text": "This dashboard provides comprehensive insights into your personal Spotify listening habits, including daily patterns, monthly trends, and weekly listening behaviors.\n\n\n\nDaily Listening Patterns: Track your daily song consumption over time\nMonthly Summaries: Analyze monthly trends and averages\nWeekly Patterns: Discover your listening habits by day of the week\nRecent Activity: View your most recent listening activity\nComprehensive Statistics: Detailed metrics about your listening behavior\n\n\n\n\nNavigate to the Dashboard to explore your listening data and discover insights about your music consumption patterns.\n\nData is automatically updated from your Spotify listening history"
+    "text": "This dashboard provides comprehensive insights into your personal Spotify listening habits."
   },
   {
     "objectID": "index.html#features",
@@ -18,21 +18,21 @@
     "href": "index.html#getting-started",
     "title": "Spotify Listening Dashboard",
     "section": "",
-    "text": "Navigate to the Dashboard to explore your listening data and discover insights about your music consumption patterns.\n\nData is automatically updated from your Spotify listening history"
+    "text": "Navigate to the Summary page to explore your listening data, or check out your Artists page to discover insights about your favorite artists.\n\nData is automatically updated from your Spotify listening history"
   },
   {
     "objectID": "summary.html",
     "href": "summary.html",
     "title": "Listening Summary",
     "section": "",
-    "text": "📅\n\nTotal Days\n715\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,708\n\n\n\n\n\n\n\n\n\n\n⏱️\n\nTotal Hours\n1208 hrs\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n29\n\n\n\n\n\n\n\n\n\n\n⏰\n\nAvg Minutes/Day\n101.4 min\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-10-27"
+    "text": "📅\n\nTotal Days\n721\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,861\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n28.9\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-11-02"
   },
   {
     "objectID": "summary.html#data-processing",
     "href": "summary.html#data-processing",
     "title": "Listening Summary",
     "section": "",
-    "text": "📅\n\nTotal Days\n715\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,708\n\n\n\n\n\n\n\n\n\n\n⏱️\n\nTotal Hours\n1208 hrs\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n29\n\n\n\n\n\n\n\n\n\n\n⏰\n\nAvg Minutes/Day\n101.4 min\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-10-27"
+    "text": "📅\n\nTotal Days\n721\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,861\n\n\n\n\n\n\n\n\n\n\n⏱️\n\nTotal Hours\n1216.9 hrs\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n28.9\n\n\n\n\n\n\n\n\n\n\n⏰\n\nAvg Minutes/Day\n101.3 min\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-11-02"
   },
   {
     "objectID": "summary.html#daily-listening-patterns",
@@ -46,7 +46,7 @@
     "href": "summary.html#monthly-summary",
     "title": "Listening Summary",
     "section": "Monthly Summary",
-    "text": "Monthly Summary\n\n\n\n\n\n\n\n\n\n\n\n\nMonthly Listening Summary\nSongs, hours, days listened, and daily averages by month"
+    "text": "Monthly Summary\n\n\n\n\n\n\n\n\n\n\n\n\nMonthly Listening Summary\nSongs, days listened, and daily averages by month"
   },
   {
     "objectID": "summary.html#weekly-patterns",
@@ -67,7 +67,7 @@
     "href": "summary.html#summary-statistics",
     "title": "Listening Summary",
     "section": "Summary Statistics",
-    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-10-27"
+    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-11-03"
   },
   {
     "objectID": "artists.html#top-5-artists---current-month",
@@ -89,5 +89,12 @@
     "title": "Artists Analysis",
     "section": "",
     "text": "Top 5 Artists - November 2025\nArtists with the most days played this month"
+  },
+  {
+    "objectID": "index.html#dashboard-pages",
+    "href": "index.html#dashboard-pages",
+    "title": "Spotify Listening Dashboard",
+    "section": "Dashboard Pages",
+    "text": "Dashboard Pages\n\nSummary: Overview of your Spotify listening patterns and trends\nArtists: Top artists analysis and listening streaks\n\n\nData is automatically updated daily from my Spotify listening history"
   }
 ]
