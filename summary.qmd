@@ -218,65 +218,6 @@ monthly_summary %>%
   opt_interactive(use_search = TRUE, use_filters = TRUE)
 ```
 
-## Weekly Patterns
-
-```{r weekly-patterns}
-#| fig-width: 12
-#| fig-height: 8
-
-# Analyze weekly patterns (starting on Monday)
-weekly_patterns <- daily_summary %>%
-  mutate(
-    weekday = wday(date, label = TRUE, abbr = FALSE, week_start = 1),
-    week_num = week(date)
-  ) %>%
-  group_by(weekday) %>%
-  summarise(
-    avg_songs = mean(songs),
-    median_songs = median(songs),
-    .groups = "drop"
-  ) %>%
-  # Reorder to start with Monday
-  mutate(weekday = factor(weekday, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")))
-
-# Create weekday plot (Monday start)
-p1 <- weekly_patterns %>%
-  ggplot(aes(x = weekday, y = avg_songs)) +
-  geom_col(fill = "#1DB954", alpha = 0.8) +
-  geom_text(aes(label = round(avg_songs, 1)), vjust = -0.5, size = 3) +
-  labs(
-    title = "Average Songs by Day of Week",
-    x = "Day of Week",
-    y = "Average Number of Songs",
-    caption = "Based on all available data (Monday start)"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  )
-
-# Create distribution plot
-p2 <- daily_summary %>%
-  ggplot(aes(x = songs)) +
-  geom_histogram(bins = 30, fill = "#1DB954", alpha = 0.7, color = "white") +
-  geom_vline(aes(xintercept = mean(songs)), color = "#FF6B6B", linetype = "dashed", size = 1) +
-  labs(
-    title = "Distribution of Daily Song Counts",
-    x = "Number of Songs",
-    y = "Frequency",
-    caption = paste("Mean:", round(mean(daily_summary$songs), 1), "songs per day")
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold")
-  )
-
-# Combine plots
-library(patchwork)
-p1 + p2
-```
-
 ## Summary Statistics
 
 ```{r summary-stats}

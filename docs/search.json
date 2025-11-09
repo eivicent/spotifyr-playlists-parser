@@ -25,7 +25,7 @@
     "href": "summary.html",
     "title": "Listening Summary",
     "section": "",
-    "text": "📅\n\nTotal Days\n721\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n20,861\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n28.9\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-11-02"
+    "text": "📅\n\nTotal Days\n727\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n21,015\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n28.9\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-11-09"
   },
   {
     "objectID": "summary.html#data-processing",
@@ -67,7 +67,7 @@
     "href": "summary.html#summary-statistics",
     "title": "Listening Summary",
     "section": "Summary Statistics",
-    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-11-03"
+    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-11-09"
   },
   {
     "objectID": "artists.html#top-5-artists---current-month",
@@ -96,5 +96,19 @@
     "title": "Spotify Listening Dashboard",
     "section": "Dashboard Pages",
     "text": "Dashboard Pages\n\nSummary: Overview of your Spotify listening patterns and trends\nArtists: Top artists analysis and listening streaks\n\n\nData is automatically updated daily from my Spotify listening history"
+  },
+  {
+    "objectID": "weekly-patterns.html#historical-weekly-distribution",
+    "href": "weekly-patterns.html#historical-weekly-distribution",
+    "title": "Weekly Patterns",
+    "section": "Historical Weekly Distribution",
+    "text": "Historical Weekly Distribution"
+  },
+  {
+    "objectID": "weekly-patterns.html#weekly-pattern-statistics",
+    "href": "weekly-patterns.html#weekly-pattern-statistics",
+    "title": "Weekly Patterns",
+    "section": "Weekly Pattern Statistics",
+    "text": "Weekly Pattern Statistics\n\n\n\n\n\nWeekly Pattern Statistics\nSummary statistics by day of week (historical data)\n\n\n\n\n\n\n\nLast updated on 2025-11-09"
   }
 ]

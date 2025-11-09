@@ -11,6 +11,8 @@ website:
         text: Home
       - href: summary.html
         text: Summary
+      - href: weekly-patterns.html
+        text: Weekly Patterns
       - href: artists.html
         text: Artists
     right:

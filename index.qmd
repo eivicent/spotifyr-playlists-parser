@@ -11,6 +11,7 @@ This dashboard provides comprehensive insights into your personal Spotify listen
 ## Dashboard Pages
 
 - **Summary**: Overview of your Spotify listening patterns and trends
+- **Weekly Patterns**: Analysis of weekly listening patterns and trends
 - **Artists**: Top artists analysis and listening streaks
 
 ---

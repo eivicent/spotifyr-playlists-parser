@@ -1,0 +1,303 @@
+---
+title: "Weekly Patterns"
+description: "Analysis of weekly listening patterns and trends"
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+
+# Load required libraries
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(lubridate)
+library(here)
+library(bslib)
+library(gt)
+```
+
+```{r load-data}
+#| message: false
+#| warning: false
+
+# Get list of all daily CSV files
+daily_files <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
+
+# Function to read and process a single daily file
+read_daily_file <- function(file_path) {
+  if (file.exists(file_path)) {
+    # Read the CSV file
+    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
+    
+    # Extract date from filename
+    date_str <- basename(file_path) %>% 
+      str_remove("\\.csv$")
+    
+    # Calculate metrics for this day
+    song_count <- nrow(daily_data)
+    
+    # Return summary
+    data.frame(
+      date = as.Date(date_str),
+      songs = song_count
+    )
+  } else {
+    return(NULL)
+  }
+}
+
+# Process all daily files
+daily_summary <- map_dfr(daily_files, read_daily_file) %>%
+  arrange(date) %>%
+  filter(!is.na(date)) %>%
+  mutate(
+    weekday = wday(date, label = TRUE, abbr = FALSE, week_start = 1),
+    weekday_num = wday(date, week_start = 1),
+    year = year(date),
+    week_num = week(date),
+    year_week = paste(year, sprintf("%02d", week_num), sep = "-W")
+  )
+
+# Reorder weekday factor to start with Monday
+daily_summary$weekday <- factor(
+  daily_summary$weekday, 
+  levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+)
+```
+
+## Current Week vs Last Week vs Historical Pattern
+
+```{r current-week-data}
+#| message: false
+#| warning: false
+
+# Get current date and calculate current week
+today <- Sys.Date()
+current_week_start <- floor_date(today, "week", week_start = 1)
+current_week_end <- current_week_start + days(6)
+last_week_start <- current_week_start - days(7)
+last_week_end <- current_week_start - days(1)
+
+# Current week data
+current_week_data <- daily_summary %>%
+  filter(date >= current_week_start & date <= current_week_end) %>%
+  group_by(weekday) %>%
+  summarise(songs = sum(songs), .groups = "drop") %>%
+  mutate(period = "Current Week")
+
+# Last week data
+last_week_data <- daily_summary %>%
+  filter(date >= last_week_start & date <= last_week_end) %>%
+  group_by(weekday) %>%
+  summarise(songs = sum(songs), .groups = "drop") %>%
+  mutate(period = "Last Week")
+
+# Historical average (all data except current and last week)
+historical_data <- daily_summary %>%
+  filter(date < last_week_start) %>%
+  group_by(weekday) %>%
+  summarise(songs = mean(songs), .groups = "drop") %>%
+  mutate(period = "Historical Average")
+
+# Combine data for plotting
+comparison_data <- bind_rows(
+  current_week_data,
+  last_week_data,
+  historical_data
+) %>%
+  mutate(
+    period = factor(period, levels = c("Current Week", "Last Week", "Historical Average"))
+  )
+```
+
+```{r weekly-pattern-comparison}
+#| fig-width: 14
+#| fig-height: 6
+
+comparison_data %>%
+  ggplot(aes(x = weekday, y = songs, fill = period)) +
+  geom_col(position = "dodge", alpha = 0.8) +
+  scale_fill_manual(
+    values = c("Current Week" = "#1DB954", "Last Week" = "#FF6B6B", "Historical Average" = "#4A90E2")
+  ) +
+  labs(
+    title = "Weekly Pattern Comparison",
+    subtitle = paste("Current week:", format(current_week_start, "%Y-%m-%d"), "to", format(current_week_end, "%Y-%m-%d")),
+    x = "Day of Week",
+    y = "Number of Songs",
+    fill = "Period",
+    caption = "Current week and last week show totals; historical shows average"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray60"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+```{r historical-weekly-pattern}
+#| fig-width: 14
+#| fig-height: 6
+
+daily_summary %>%
+  filter(date < last_week_start) %>%
+  group_by(weekday) %>%
+  summarise(
+    avg_songs = mean(songs),
+    median_songs = median(songs),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(x = weekday)) +
+  geom_line(aes(y = avg_songs, group = 1, color = "Average"), size = 1.2) +
+  geom_point(aes(y = avg_songs, color = "Average"), size = 2) +
+  geom_line(aes(y = median_songs, group = 1, color = "Median"), size = 1.2, linetype = "dashed") +
+  geom_point(aes(y = median_songs, color = "Median"), size = 2) +
+  scale_color_manual(
+    values = c("Average" = "#1DB954", "Median" = "#FF6B6B"),
+    name = "Statistic"
+  ) +
+  labs(
+    title = "Historical Weekly Pattern",
+    x = "Day of Week",
+    y = "Number of Songs",
+    caption = "Based on all historical data"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+```
+
+## Historical Weekly Distribution
+
+```{r monthly-weekly-data}
+#| message: false
+#| warning: false
+
+# Create line chart showing weekly patterns by month
+# Aggregate across all years for each month
+monthly_weekly_data <- daily_summary %>%
+  filter(date < last_week_start) %>%
+  mutate(
+    month = month(date, label = TRUE, abbr = FALSE),
+    month_num = month(date)
+  ) %>%
+  group_by(month, month_num, weekday) %>%
+  summarise(
+    avg_songs = mean(songs),
+    .groups = "drop"
+  ) %>%
+  arrange(month_num)
+```
+
+```{r monthly-weekly-pattern}
+#| fig-width: 14
+#| fig-height: 6
+
+monthly_weekly_data %>%
+  ggplot(aes(x = reorder(month, month_num), y = avg_songs, color = weekday, group = weekday)) +
+  geom_line(size = 1.2, alpha = 0.8) +
+  geom_point(size = 2, alpha = 0.8) +
+  scale_color_viridis_d(option = "plasma", name = "Day of Week") +
+  labs(
+    title = "Historical Weekly Pattern by Month",
+    subtitle = "Average songs per day by month and day of week (aggregated across all years)",
+    x = "Month",
+    y = "Average Number of Songs",
+    caption = "Each line represents a different day of the week"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray60"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "right"
+  )
+```
+
+```{r weekday-distribution}
+#| fig-width: 14
+#| fig-height: 6
+
+daily_summary %>%
+  filter(date < last_week_start) %>%
+  ggplot(aes(x = weekday, y = songs, fill = weekday)) +
+  geom_violin(alpha = 0.7, trim = FALSE) +
+  geom_boxplot(width = 0.1, fill = "white", alpha = 0.5) +
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 3, fill = "red") +
+  scale_fill_viridis_d(option = "C") +
+  labs(
+    title = "Distribution of Songs by Day of Week",
+    subtitle = "Violin plot showing the distribution of daily song counts",
+    x = "Day of Week",
+    y = "Number of Songs",
+    caption = "Red diamond shows mean; boxplot shows quartiles"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12, color = "gray60"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+```
+
+## Weekly Pattern Statistics
+
+```{r weekly-stats}
+#| message: false
+
+# Calculate statistics by weekday
+weekday_stats <- daily_summary %>%
+  filter(date < last_week_start) %>%
+  group_by(weekday) %>%
+  summarise(
+    `Average Songs` = round(mean(songs), 2),
+    `Median Songs` = median(songs),
+    `Min Songs` = min(songs),
+    `Max Songs` = max(songs),
+    `Std Dev` = round(sd(songs), 2),
+    `Days Count` = n(),
+    .groups = "drop"
+  ) %>%
+  arrange(weekday)
+
+# Display statistics table
+weekday_stats %>%
+  gt::gt() %>%
+  gt::tab_header(
+    title = "Weekly Pattern Statistics",
+    subtitle = "Summary statistics by day of week (historical data)"
+  ) %>%
+  gt::cols_label(
+    weekday = "Day of Week"
+  ) %>%
+  gt::fmt_number(
+    columns = c(`Average Songs`, `Std Dev`),
+    decimals = 2
+  ) %>%
+  gt::fmt_number(
+    columns = c(`Median Songs`, `Min Songs`, `Max Songs`, `Days Count`),
+    decimals = 0
+  ) %>%
+  gt::data_color(
+    columns = `Average Songs`,
+    colors = scales::col_numeric(
+      palette = c("#E8F5E9", "#1B5E20"),
+      domain = NULL
+    )
+  ) %>%
+  gt::opt_interactive(use_search = TRUE)
+```
+
+---
+
+*Last updated on `r Sys.Date()`*
+
