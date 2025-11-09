@@ -7,69 +7,20 @@ description: "Top artists and listening streaks"
 #| message: false
 #| warning: false
 
-# Load required libraries
-library(dplyr)
-library(purrr)
-library(tidyr)
-library(stringr)
-library(ggplot2)
-library(lubridate)
-library(gt)
+# Load here first (needed to source utils file)
 library(here)
-library(bslib)
+
+# Load standardized utilities
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
 ```
 
 ```{r load-artist-data}
 #| message: false
 #| warning: false
 
-# Get list of all daily CSV files
-daily_files <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
-
-# Function to read and process a single daily file
-read_daily_file <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename as fallback
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Use day column if available, otherwise try played_at, otherwise use filename
-    if ("day" %in% colnames(daily_data) && !all(is.na(daily_data$day))) {
-      daily_data$date <- as.Date(daily_data$day)
-    } else if ("played_at" %in% colnames(daily_data)) {
-      # Parse played_at timestamp to get date
-      daily_data$date <- as.Date(substr(daily_data$played_at, 1, 10))
-    } else {
-      daily_data$date <- as.Date(date_str)
-    }
-    
-    # Select relevant columns (name is artist, day or date for the date)
-    artist_data <- daily_data %>%
-      select(name, date, track.name) %>%
-      filter(!is.na(name), !is.na(date)) %>%
-      rename(song = track.name)
-    
-    return(artist_data)
-  } else {
-    return(NULL)
-  }
-}
-
-# Process all daily files
-all_artist_data <- map_dfr(daily_files, read_daily_file) %>%
-  arrange(date) %>%
-  filter(!is.na(date), !is.na(name)) %>%
-  distinct()  # Remove duplicates
-
-# Create year-month column for grouping
-all_artist_data <- all_artist_data %>%
-  mutate(
-    year_month = floor_date(date, "month"),
-    year_month_str = format(year_month, "%Y-%m")
-  )
+# Load artist data using standardized function
+all_artist_data <- load_artist_data()
 ```
 
 ## Top 5 Artists - Current Month

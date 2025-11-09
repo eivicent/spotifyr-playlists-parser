@@ -7,62 +7,21 @@ description: "Overview of your Spotify listening patterns and trends"
 #| message: false
 #| warning: false
 
-# Load required libraries (avoid tidyverse; use smaller packages)
-library(dplyr)
-library(purrr)
-library(tidyr)
-library(stringr)
-library(ggplot2)
-library(lubridate)
-library(gt)
-library(patchwork)
+# Load here first (needed to source utils file)
 library(here)
-library(bslib)
+
+# Load standardized utilities
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
+library(patchwork)  # Additional library for this document
 ```
 
 ```{r load-data}
 #| message: false
 #| warning: false
 
-# Get list of all daily CSV files
-daily_files <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
-
-# Function to read and process a single daily file
-read_daily_file <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Calculate metrics for this day
-    song_count <- nrow(daily_data)
-    unique_artists <- length(unique(daily_data$name))
-    unique_tracks <- length(unique(daily_data$track.name))
-    
-    # Estimate minutes listened (assuming average 3.5 minutes per song)
-    estimated_minutes <- song_count * 3.5
-    
-    # Return comprehensive summary
-    data.frame(
-      date = as.Date(date_str),
-      songs = song_count,
-      unique_artists = unique_artists,
-      unique_tracks = unique_tracks,
-      estimated_minutes = estimated_minutes,
-      file = basename(file_path)
-    )
-  } else {
-    return(NULL)
-  }
-}
-
-# Process all daily files
-daily_summary <- map_dfr(daily_files, read_daily_file) %>%
-  arrange(date) %>%
-  filter(!is.na(date))
+# Load daily summary data using standardized function
+daily_summary <- load_daily_summary()
 ```
 
 

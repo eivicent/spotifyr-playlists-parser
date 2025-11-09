@@ -7,65 +7,21 @@ description: "Analysis of weekly listening patterns and trends"
 #| message: false
 #| warning: false
 
-# Load required libraries
-library(dplyr)
-library(purrr)
-library(tidyr)
-library(stringr)
-library(ggplot2)
-library(lubridate)
+# Load here first (needed to source utils file)
 library(here)
-library(bslib)
-library(gt)
+
+# Load standardized utilities
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
 ```
 
 ```{r load-data}
 #| message: false
 #| warning: false
 
-# Get list of all daily CSV files
-daily_files <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
-
-# Function to read and process a single daily file
-read_daily_file <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Calculate metrics for this day
-    song_count <- nrow(daily_data)
-    
-    # Return summary
-    data.frame(
-      date = as.Date(date_str),
-      songs = song_count
-    )
-  } else {
-    return(NULL)
-  }
-}
-
-# Process all daily files
-daily_summary <- map_dfr(daily_files, read_daily_file) %>%
-  arrange(date) %>%
-  filter(!is.na(date)) %>%
-  mutate(
-    weekday = wday(date, label = TRUE, abbr = FALSE, week_start = 1),
-    weekday_num = wday(date, week_start = 1),
-    year = year(date),
-    week_num = week(date),
-    year_week = paste(year, sprintf("%02d", week_num), sep = "-W")
-  )
-
-# Reorder weekday factor to start with Monday
-daily_summary$weekday <- factor(
-  daily_summary$weekday, 
-  levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-)
+# Load daily summary data and add weekday information using standardized functions
+daily_summary <- load_daily_summary_simple() %>%
+  add_weekday_info()
 ```
 
 ## Current Week vs Last Week vs Historical Pattern
