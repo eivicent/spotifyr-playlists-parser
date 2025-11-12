@@ -88,7 +88,7 @@
     "href": "artists.html",
     "title": "Artists Analysis",
     "section": "",
-    "text": "Top 5 Artists - November 2025\nArtists with the most days played this month"
+    "text": "Top 5 Artists Comparison\nThis Month: November 2025 | Last Month: October 2025 | Historical: All Time"
   },
   {
     "objectID": "index.html#dashboard-pages",
@@ -110,5 +110,19 @@
     "title": "Weekly Patterns",
     "section": "Weekly Pattern Statistics",
     "text": "Weekly Pattern Statistics\n\n\n\n\n\nWeekly Pattern Statistics\nSummary statistics by day of week (historical data)\n\n\n\n\n\n\n\nLast updated on 2025-11-09"
+  },
+  {
+    "objectID": "artists.html#top-5-artists---this-month-last-month-and-historical",
+    "href": "artists.html#top-5-artists---this-month-last-month-and-historical",
+    "title": "Artists Analysis",
+    "section": "",
+    "text": "Top 5 Artists Comparison\nThis Month: November 2025 | Last Month: October 2025 | Historical: All Time"
+  },
+  {
+    "objectID": "artists.html#top-5-artists-by-total-songs-and-days-listened",
+    "href": "artists.html#top-5-artists-by-total-songs-and-days-listened",
+    "title": "Artists Analysis",
+    "section": "Top 5 Artists by Total Songs and Days Listened",
+    "text": "Top 5 Artists by Total Songs and Days Listened\n\n\n\n\n\nTop 5 Artists by Total Songs and Days Listened\nMetrics as rows, top 5 artists as columns (Artist Name (KPI))\n\n\n\n\n\n\n\nLast updated on 2025-11-12"
   }
 ]
