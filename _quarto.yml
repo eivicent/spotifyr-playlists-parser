@@ -11,6 +11,8 @@ website:
         text: Home
       - href: summary.html
         text: Summary
+      - href: monthly.html
+        text: Monthly
       - href: weekly-patterns.html
         text: Weekly Patterns
       - href: artists.html
