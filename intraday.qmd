@@ -1,0 +1,296 @@
+---
+title: "Intraday Patterns"
+description: "When do you listen? Hour-of-day patterns and listening session analysis"
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+
+library(here)
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
+library(viridis)
+```
+
+```{r load-data}
+#| message: false
+#| warning: false
+
+intraday  <- load_intraday_hourly()
+sessions  <- load_sessions()
+
+# All-time average plays by hour × weekday
+hourly_weekday <- intraday %>%
+  mutate(weekday = wday(date, label = TRUE, abbr = TRUE, week_start = 1)) %>%
+  group_by(weekday, hour) %>%
+  summarise(avg_plays = round(mean(total_plays), 2), .groups = "drop") %>%
+  mutate(weekday = factor(weekday, levels = c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")))
+
+# Aggregate by hour across all days
+hourly_overall <- intraday %>%
+  group_by(hour) %>%
+  summarise(
+    avg_plays      = round(mean(total_plays), 2),
+    total_plays    = sum(total_plays),
+    .groups        = "drop"
+  )
+
+peak_hour    <- hourly_overall$hour[which.max(hourly_overall$avg_plays)]
+peak_label   <- paste0(peak_hour, ":00–", peak_hour + 1, ":00")
+avg_sessions <- round(nrow(sessions) / n_distinct(sessions$date), 1)
+avg_session_songs <- round(mean(sessions$session_songs), 1)
+peak_session_hour <- sessions %>%
+  count(session_start_hour) %>%
+  slice_max(n, n = 1) %>%
+  pull(session_start_hour)
+```
+
+## Listening Overview
+
+```{r listening-value-boxes}
+layout_column_wrap(
+  width = 1/4,
+  value_box(
+    title    = "Peak Listening Hour",
+    value    = peak_label,
+    showcase = bsicons::bs_icon("clock"),
+    theme    = "primary"
+  ),
+  value_box(
+    title    = "Avg Sessions / Day",
+    value    = avg_sessions,
+    showcase = bsicons::bs_icon("play-circle"),
+    theme    = "success"
+  ),
+  value_box(
+    title    = "Avg Songs / Session",
+    value    = avg_session_songs,
+    showcase = bsicons::bs_icon("music-note-list"),
+    theme    = "secondary"
+  ),
+  value_box(
+    title    = "Peak Session Start",
+    value    = paste0(peak_session_hour, ":00"),
+    showcase = bsicons::bs_icon("lightning"),
+    theme    = "info"
+  )
+)
+```
+
+## Hour × Weekday Heatmap
+
+> Average songs played per hour slot, aggregated across all days. Brighter = more listening.
+
+```{r heatmap}
+#| fig-width: 14
+#| fig-height: 5
+
+p <- hourly_weekday %>%
+  ggplot(aes(x = hour, y = weekday, fill = avg_plays)) +
+  geom_tile_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", weekday, " at ", hour, ":00</b><br>",
+        "Avg plays: ", avg_plays
+      ),
+      data_id = paste(weekday, hour, sep = "-")
+    ),
+    color = "white", linewidth = 0.4
+  ) +
+  scale_fill_viridis_c(option = "plasma", name = "Avg Plays") +
+  scale_x_continuous(
+    breaks = c(0, 6, 9, 12, 15, 18, 21),
+    labels = c("00:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00")
+  ) +
+  labs(
+    title    = "Listening Heatmap — Hour of Day × Day of Week",
+    subtitle = "All-time average songs played per hour slot",
+    x        = "Hour of Day",
+    y        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 15, face = "bold"),
+    plot.subtitle = element_text(size = 11, color = "gray60"),
+    panel.grid    = element_blank()
+  )
+
+make_girafe(p, height_svg = 4)
+```
+
+## Average Plays by Hour of Day
+
+```{r hourly-line}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- hourly_overall %>%
+  ggplot(aes(x = hour, y = avg_plays)) +
+  geom_area(fill = "#1DB954", alpha = 0.2) +
+  geom_line(color = "#1DB954", linewidth = 1.3) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0("<b>", hour, ":00</b><br>Avg plays: ", avg_plays),
+      data_id = as.character(hour)
+    ),
+    color = "#1DB954", size = 3
+  ) +
+  geom_vline(xintercept = peak_hour, linetype = "dashed", color = "#FF6B6B", linewidth = 0.8) +
+  annotate("text", x = peak_hour + 0.4, y = max(hourly_overall$avg_plays) * 0.95,
+           label = paste0("Peak: ", peak_label), color = "#FF6B6B", size = 3.5, hjust = 0) +
+  scale_x_continuous(breaks = seq(0, 23, 3), labels = paste0(seq(0, 23, 3), ":00")) +
+  labs(
+    title   = "Average Songs by Hour of Day",
+    caption = "All-time average across all days",
+    x       = "Hour",
+    y       = "Avg Songs"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 14, face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+## Listening Sessions
+
+### Session Length Distribution
+
+```{r session-distribution}
+#| fig-width: 12
+#| fig-height: 5
+
+session_bins <- sessions %>%
+  mutate(
+    length_group = case_when(
+      session_songs == 1  ~ "1 song",
+      session_songs <= 3  ~ "2–3 songs",
+      session_songs <= 7  ~ "4–7 songs",
+      session_songs <= 15 ~ "8–15 songs",
+      session_songs <= 30 ~ "16–30 songs",
+      TRUE                ~ "30+ songs"
+    ),
+    length_group = factor(length_group,
+      levels = c("1 song", "2–3 songs", "4–7 songs", "8–15 songs", "16–30 songs", "30+ songs"))
+  ) %>%
+  count(length_group)
+
+p <- session_bins %>%
+  ggplot(aes(x = length_group, y = n, fill = length_group)) +
+  geom_col_interactive(
+    aes(
+      tooltip = paste0("<b>", length_group, "</b><br>Sessions: ", scales::comma(n),
+                       "<br>", round(n / sum(n) * 100, 1), "% of total"),
+      data_id = as.character(length_group)
+    ),
+    alpha = 0.85
+  ) +
+  geom_text(aes(label = scales::comma(n)), vjust = -0.4, size = 3.5) +
+  scale_fill_viridis_d(option = "plasma", guide = "none") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    title    = "Session Length Distribution",
+    subtitle = paste0("Total sessions: ", scales::comma(nrow(sessions)), " · Avg: ", avg_session_songs, " songs"),
+    x        = "Session Length",
+    y        = "Number of Sessions"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 11, color = "gray60"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor   = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+### When Sessions Start
+
+```{r session-start-hours}
+#| fig-width: 12
+#| fig-height: 5
+
+session_start_dist <- sessions %>%
+  count(session_start_hour, name = "sessions")
+
+p <- session_start_dist %>%
+  ggplot(aes(x = session_start_hour, y = sessions)) +
+  geom_col_interactive(
+    aes(
+      tooltip = paste0("<b>", session_start_hour, ":00</b><br>Sessions started: ", sessions),
+      data_id = as.character(session_start_hour),
+      fill    = sessions
+    ),
+    alpha = 0.9
+  ) +
+  scale_fill_gradient(low = "#4A90E2", high = "#1DB954", guide = "none") +
+  scale_x_continuous(breaks = seq(0, 23, 3), labels = paste0(seq(0, 23, 3), ":00")) +
+  labs(
+    title   = "Session Start Times",
+    subtitle = "How many sessions begin at each hour of the day",
+    x       = "Hour of Day",
+    y       = "Number of Sessions"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 11, color = "gray60"),
+    panel.grid.minor   = element_blank(),
+    panel.grid.major.x = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+### Monthly Session Trends
+
+```{r monthly-sessions}
+#| fig-width: 12
+#| fig-height: 5
+
+monthly_sessions <- sessions %>%
+  mutate(year_month = floor_date(date, "month")) %>%
+  group_by(year_month) %>%
+  summarise(
+    total_sessions    = n(),
+    avg_session_songs = round(mean(session_songs), 1),
+    .groups           = "drop"
+  )
+
+p <- monthly_sessions %>%
+  ggplot(aes(x = year_month, y = total_sessions)) +
+  geom_line(color = "#4A90E2", linewidth = 1.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Sessions: ", total_sessions, "<br>",
+        "Avg session songs: ", avg_session_songs
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#4A90E2", size = 2.5
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  labs(
+    title   = "Monthly Session Count",
+    x       = NULL,
+    y       = "Sessions"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 14, face = "bold"),
+    axis.text.x   = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+---
+
+*Last updated on `r Sys.Date()`*

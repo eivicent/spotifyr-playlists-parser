@@ -50,3 +50,6 @@ rsconnect/
 secrets/
 
 /.quarto/
+
+# targets pipeline cache (only data/processed/ is committed, not metadata)
+/_targets/

@@ -1,7 +1,6 @@
 # Spotify Playlists Parser - Utility Functions
 # Standardized functions for use across all .qmd files
 
-# Load required libraries
 load_common_libraries <- function() {
   library(dplyr)
   library(purrr)
@@ -12,158 +11,164 @@ load_common_libraries <- function() {
   library(here)
   library(bslib)
   library(gt)
+  library(scales)
+  library(ggiraph)
 }
 
-# Get list of daily CSV files
+# ── Processed data loaders (fast, pre-aggregated) ────────────────────────────
+
+# Daily summary: date, total_songs, unique_songs, unique_artists, repetition_kpi
+load_daily_processed <- function() {
+  path <- here("data", "processed", "daily.rds")
+  if (!file.exists(path)) stop("daily.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(date)
+}
+
+# Weekly summary: year_week, week_start, total_songs, unique_songs, unique_artists,
+#   days_in_data, avg_songs_per_day, repetition_kpi, daily_cumulative (list-col)
+load_weekly_processed <- function() {
+  path <- here("data", "processed", "weekly.rds")
+  if (!file.exists(path)) stop("weekly.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(week_start)
+}
+
+# Monthly summary: year_month, total_songs, unique_songs, unique_artists,
+#   days_in_data, avg_songs_per_day, avg_songs_per_week, repetition_kpi,
+#   daily_cumulative (list-col)
+load_monthly_processed <- function() {
+  path <- here("data", "processed", "monthly.rds")
+  if (!file.exists(path)) stop("monthly.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(year_month)
+}
+
+# Discovery data: date, total_songs, new_artists, new_tracks,
+#   discovery_artist_rate, discovery_track_rate,
+#   cumulative_new_artists, cumulative_new_tracks
+load_discovery <- function() {
+  path <- here("data", "processed", "discovery.rds")
+  if (!file.exists(path)) stop("discovery.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(date)
+}
+
+# Intraday hourly: date, hour (0-23), total_plays, unique_tracks, unique_artists
+load_intraday_hourly <- function() {
+  path <- here("data", "processed", "intraday_hourly.rds")
+  if (!file.exists(path)) stop("intraday_hourly.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(date, hour)
+}
+
+# Sessions: date, session_id, session_start, session_start_hour,
+#   session_songs, session_unique_tracks, session_unique_artists
+load_sessions <- function() {
+  path <- here("data", "processed", "sessions.rds")
+  if (!file.exists(path)) stop("sessions.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(date, session_id)
+}
+
+# Lifecycle: artist, first_listen, last_listen, total_plays, total_days,
+#   max_gap_days, comeback_count, is_active, stickiness
+load_lifecycle <- function() {
+  path <- here("data", "processed", "lifecycle.rds")
+  if (!file.exists(path)) stop("lifecycle.rds not found. Run src/scripts/process_data.R first.")
+  readRDS(path) %>% arrange(desc(total_plays))
+}
+
+# ── Backwards-compatible aliases ─────────────────────────────────────────────
+
+# Kept for any remaining callers; returns daily processed data with legacy
+# column name `songs` mapped to `total_songs`.
+load_daily_summary <- function() {
+  load_daily_processed() %>%
+    rename(songs = total_songs, unique_tracks = unique_songs)
+}
+
+load_daily_summary_simple <- function() {
+  load_daily_processed() %>%
+    select(date, songs = total_songs)
+}
+
+# ── Raw artist loader (used by artists.qmd) ───────────────────────────────────
+
 get_daily_files <- function() {
   list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE)
 }
 
-# Extract date from filename
-extract_date_from_filename <- function(file_path) {
-  basename(file_path) %>% 
-    str_remove("\\.csv$") %>%
-    as.Date()
-}
-
-# Read and process a single daily file - Summary version (with all metrics)
-read_daily_file_summary <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Calculate metrics for this day
-    song_count <- nrow(daily_data)
-    unique_artists <- length(unique(daily_data$name))
-    unique_tracks <- length(unique(daily_data$track.name))
-    
-    # Estimate minutes listened (assuming average 3.5 minutes per song)
-    estimated_minutes <- song_count * 3.5
-    
-    # Return comprehensive summary
-    data.frame(
-      date = as.Date(date_str),
-      songs = song_count,
-      unique_artists = unique_artists,
-      unique_tracks = unique_tracks,
-      estimated_minutes = estimated_minutes,
-      file = basename(file_path)
-    )
-  } else {
-    return(NULL)
-  }
-}
-
-# Read and process a single daily file - Simple version (date and songs only)
-read_daily_file_simple <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Calculate metrics for this day
-    song_count <- nrow(daily_data)
-    
-    # Return summary
-    data.frame(
-      date = as.Date(date_str),
-      songs = song_count
-    )
-  } else {
-    return(NULL)
-  }
-}
-
-# Read and process a single daily file - Artist version (with date extraction logic)
 read_daily_file_artist <- function(file_path) {
-  if (file.exists(file_path)) {
-    # Read the CSV file
-    daily_data <- read.csv(file_path, sep = ";", stringsAsFactors = FALSE)
-    
-    # Extract date from filename as fallback
-    date_str <- basename(file_path) %>% 
-      str_remove("\\.csv$")
-    
-    # Use day column if available, otherwise try played_at, otherwise use filename
-    if ("day" %in% colnames(daily_data) && !all(is.na(daily_data$day))) {
-      daily_data$date <- as.Date(daily_data$day)
-    } else if ("played_at" %in% colnames(daily_data)) {
-      # Parse played_at timestamp to get date
-      daily_data$date <- as.Date(substr(daily_data$played_at, 1, 10))
-    } else {
-      daily_data$date <- as.Date(date_str)
-    }
-    
-    # Select relevant columns (name is artist, day or date for the date)
-    artist_data <- daily_data %>%
-      select(name, date, track.name) %>%
-      filter(!is.na(name), !is.na(date)) %>%
-      rename(song = track.name)
-    
-    return(artist_data)
+  if (!file.exists(file_path)) return(NULL)
+  daily_data <- tryCatch(
+    read.csv(file_path, sep = ";", stringsAsFactors = FALSE),
+    error = function(e) NULL
+  )
+  if (is.null(daily_data) || nrow(daily_data) == 0) return(NULL)
+
+  date_str <- basename(file_path) %>%
+    stringr::str_remove("\\.csv$")
+
+  if ("day" %in% colnames(daily_data) && !all(is.na(daily_data$day))) {
+    daily_data$date <- as.Date(daily_data$day)
+  } else if ("played_at" %in% colnames(daily_data)) {
+    daily_data$date <- as.Date(substr(daily_data$played_at, 1, 10))
   } else {
-    return(NULL)
+    daily_data$date <- as.Date(date_str)
   }
+
+  daily_data %>%
+    dplyr::select(name, date, track.name) %>%
+    dplyr::filter(!is.na(name), !is.na(date)) %>%
+    dplyr::rename(song = track.name) %>%
+    as_tibble()
 }
 
-# Load daily summary data (summary version)
-load_daily_summary <- function() {
-  daily_files <- get_daily_files()
-  daily_summary <- map_dfr(daily_files, read_daily_file_summary) %>%
-    arrange(date) %>%
-    filter(!is.na(date))
-  return(daily_summary)
-}
-
-# Load daily summary data (simple version)
-load_daily_summary_simple <- function() {
-  daily_files <- get_daily_files()
-  daily_summary <- map_dfr(daily_files, read_daily_file_simple) %>%
-    arrange(date) %>%
-    filter(!is.na(date))
-  return(daily_summary)
-}
-
-# Load artist data
 load_artist_data <- function() {
   daily_files <- get_daily_files()
-  all_artist_data <- map_dfr(daily_files, read_daily_file_artist) %>%
-    arrange(date) %>%
-    filter(!is.na(date), !is.na(name)) %>%
-    distinct()  # Remove duplicates
-  
-  # Create year-month column for grouping
-  all_artist_data <- all_artist_data %>%
-    mutate(
-      year_month = floor_date(date, "month"),
+  purrr::map_dfr(daily_files, read_daily_file_artist) %>%
+    dplyr::arrange(date) %>%
+    dplyr::filter(!is.na(date), !is.na(name)) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(
+      year_month     = lubridate::floor_date(date, "month"),
       year_month_str = format(year_month, "%Y-%m")
     )
-  
-  return(all_artist_data)
 }
 
-# Add weekday information to daily summary
+# ── Weekday helper ────────────────────────────────────────────────────────────
+
 add_weekday_info <- function(daily_summary) {
   daily_summary %>%
-    mutate(
-      weekday = wday(date, label = TRUE, abbr = FALSE, week_start = 1),
-      weekday_num = wday(date, week_start = 1),
-      year = year(date),
-      week_num = week(date),
-      year_week = paste(year, sprintf("%02d", week_num), sep = "-W")
+    dplyr::mutate(
+      weekday     = lubridate::wday(date, label = TRUE, abbr = FALSE, week_start = 1),
+      weekday_num = lubridate::wday(date, week_start = 1),
+      year        = lubridate::year(date),
+      week_num    = lubridate::week(date),
+      year_week   = paste(year, sprintf("%02d", week_num), sep = "-W")
     ) %>%
-    mutate(
+    dplyr::mutate(
       weekday = factor(
-        weekday, 
+        weekday,
         levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
       )
     )
 }
 
+# ── ggiraph helpers ───────────────────────────────────────────────────────────
+
+# Standard girafe options for consistent interactivity across all charts
+girafe_opts <- function() {
+  list(
+    opts_hover(css = "stroke-width:2;opacity:1;"),
+    opts_hover_inv(css = "opacity:0.3;"),
+    opts_tooltip(
+      css = "background-color:#1e1e2e;color:#cdd6f4;padding:8px 12px;border-radius:6px;font-size:13px;",
+      use_fill = FALSE
+    )
+  )
+}
+
+make_girafe <- function(gg, width_svg = 10, height_svg = 5) {
+  girafe(
+    ggobj    = gg,
+    width_svg = width_svg,
+    height_svg = height_svg,
+    options  = girafe_opts()
+  )
+}

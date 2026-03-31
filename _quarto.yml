@@ -17,6 +17,12 @@ website:
         text: Weekly Patterns
       - href: artists.html
         text: Artists
+      - href: discovery.html
+        text: Discovery
+      - href: intraday.html
+        text: Intraday
+      - href: lifecycle.html
+        text: Lifecycle
     right:
       - icon: github
         href: https://github.com/eivicent/spotifyr-playlists-parser

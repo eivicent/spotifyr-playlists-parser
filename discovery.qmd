@@ -1,0 +1,464 @@
+---
+title: "Musical Discovery"
+description: "Monitor your musical exploration: new artists, new tracks, and discovery trends"
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+
+library(here)
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
+library(viridis)
+```
+
+```{r load-data}
+#| message: false
+#| warning: false
+
+discovery <- load_discovery()
+daily     <- load_daily_processed()
+monthly   <- load_monthly_processed()
+weekly    <- load_weekly_processed()
+
+# Monthly discovery aggregates
+monthly_discovery <- discovery %>%
+  mutate(year_month = floor_date(date, "month")) %>%
+  group_by(year_month) %>%
+  summarise(
+    new_artists           = sum(new_artists),
+    new_tracks            = sum(new_tracks),
+    total_songs           = sum(total_songs),
+    discovery_artist_rate = round(mean(discovery_artist_rate), 4),
+    discovery_track_rate  = round(mean(discovery_track_rate), 4),
+    .groups               = "drop"
+  )
+
+# Weekly discovery aggregates
+weekly_discovery <- discovery %>%
+  mutate(week_start = floor_date(date, "week", week_start = 1)) %>%
+  group_by(week_start) %>%
+  summarise(
+    new_artists           = sum(new_artists),
+    new_tracks            = sum(new_tracks),
+    total_songs           = sum(total_songs),
+    discovery_track_rate  = round(mean(discovery_track_rate), 4),
+    .groups               = "drop"
+  )
+
+# Discovery score = weighted combo of track discovery rate and inverse repetition KPI
+# Score is 0–100: higher = more exploratory
+discovery_with_rep <- discovery %>%
+  left_join(daily %>% select(date, repetition_kpi), by = "date") %>%
+  mutate(
+    exploration_score = round(
+      (discovery_track_rate * 50) + (50 / pmax(repetition_kpi, 1)),
+      1
+    )
+  )
+
+# Current month stats
+current_month      <- floor_date(Sys.Date(), "month")
+current_disc       <- monthly_discovery %>% filter(year_month == current_month)
+previous_disc      <- monthly_discovery %>% filter(year_month == current_month %m-% months(1))
+
+current_new_tracks  <- if (nrow(current_disc) > 0) current_disc$new_tracks  else 0
+current_new_artists <- if (nrow(current_disc) > 0) current_disc$new_artists else 0
+prev_new_tracks     <- if (nrow(previous_disc) > 0) previous_disc$new_tracks  else 0
+
+total_unique_artists <- max(discovery$cumulative_new_artists, na.rm = TRUE)
+total_unique_tracks  <- max(discovery$cumulative_new_tracks,  na.rm = TRUE)
+```
+
+## Discovery Overview
+
+```{r discovery-value-boxes}
+layout_column_wrap(
+  width = 1/4,
+  value_box(
+    title    = "Total Artists Discovered",
+    value    = scales::comma(total_unique_artists),
+    showcase = bsicons::bs_icon("person-bounding-box"),
+    theme    = "primary"
+  ),
+  value_box(
+    title    = "Total Tracks Discovered",
+    value    = scales::comma(total_unique_tracks),
+    showcase = bsicons::bs_icon("vinyl"),
+    theme    = "success"
+  ),
+  value_box(
+    title    = paste("New Tracks —", format(current_month, "%b %Y")),
+    value    = current_new_tracks,
+    showcase = bsicons::bs_icon("star"),
+    theme    = if (current_new_tracks >= prev_new_tracks) "success" else "secondary"
+  ),
+  value_box(
+    title    = paste("New Artists —", format(current_month, "%b %Y")),
+    value    = current_new_artists,
+    showcase = bsicons::bs_icon("person-plus"),
+    theme    = "info"
+  )
+)
+```
+
+## Cumulative Discovery
+
+::: {.panel-tabset}
+
+### Artists
+
+```{r cumulative-artists}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- discovery %>%
+  ggplot(aes(x = date, y = cumulative_new_artists)) +
+  geom_area(fill = "#1DB954", alpha = 0.2) +
+  geom_line_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(date, "%b %d, %Y"), "</b><br>",
+        "Total unique artists: ", scales::comma(cumulative_new_artists), "<br>",
+        "New today: ", new_artists
+      ),
+      data_id = as.character(date)
+    ),
+    color = "#1DB954", linewidth = 1.2
+  ) +
+  labs(
+    title   = "Cumulative Unique Artists Discovered",
+    caption = "Total distinct artists ever heard, growing over time",
+    x       = NULL,
+    y       = "Unique Artists"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(
+    plot.title       = element_text(size = 14, face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+### Tracks
+
+```{r cumulative-tracks}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- discovery %>%
+  ggplot(aes(x = date, y = cumulative_new_tracks)) +
+  geom_area(fill = "#4A90E2", alpha = 0.2) +
+  geom_line_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(date, "%b %d, %Y"), "</b><br>",
+        "Total unique tracks: ", scales::comma(cumulative_new_tracks), "<br>",
+        "New today: ", new_tracks
+      ),
+      data_id = as.character(date)
+    ),
+    color = "#4A90E2", linewidth = 1.2
+  ) +
+  labs(
+    title   = "Cumulative Unique Tracks Discovered",
+    caption = "Total distinct tracks ever heard, growing over time",
+    x       = NULL,
+    y       = "Unique Tracks"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  scale_y_continuous(labels = scales::comma) +
+  theme_minimal() +
+  theme(
+    plot.title       = element_text(size = 14, face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+:::
+
+## New Discoveries Per Month
+
+::: {.panel-tabset}
+
+### New Artists
+
+```{r monthly-new-artists}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- monthly_discovery %>%
+  ggplot(aes(x = year_month, y = new_artists)) +
+  geom_col_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "New artists: ", new_artists, "<br>",
+        "Total songs: ", scales::comma(total_songs)
+      ),
+      data_id = as.character(year_month),
+      fill    = new_artists
+    ),
+    alpha = 0.85
+  ) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = FALSE) +
+  scale_fill_gradient(low = "#4A90E2", high = "#1DB954", guide = "none") +
+  labs(
+    title   = "New Artists Discovered per Month",
+    caption = "Red line = LOESS trend",
+    x       = NULL,
+    y       = "New Artists"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme_minimal() +
+  theme(
+    plot.title      = element_text(size = 14, face = "bold"),
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+### New Tracks
+
+```{r monthly-new-tracks}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- monthly_discovery %>%
+  ggplot(aes(x = year_month, y = new_tracks)) +
+  geom_col_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "New tracks: ", new_tracks, "<br>",
+        "Total songs: ", scales::comma(total_songs)
+      ),
+      data_id = as.character(year_month),
+      fill    = new_tracks
+    ),
+    alpha = 0.85
+  ) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = FALSE) +
+  scale_fill_gradient(low = "#4A90E2", high = "#1DB954", guide = "none") +
+  labs(
+    title   = "New Tracks Discovered per Month",
+    caption = "Red line = LOESS trend",
+    x       = NULL,
+    y       = "New Tracks"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme_minimal() +
+  theme(
+    plot.title      = element_text(size = 14, face = "bold"),
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+:::
+
+## Discovery Rate Over Time
+
+> **Discovery Rate** = proportion of today's songs that were first-ever listens. A rate of 0.5 means half of what you listened to today was new to you.
+
+```{r weekly-discovery-rate}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- weekly_discovery %>%
+  ggplot(aes(x = week_start, y = discovery_track_rate)) +
+  geom_line(color = "#4A90E2", linewidth = 0.8, alpha = 0.6) +
+  geom_smooth(method = "loess", color = "#1DB954", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>Week of ", format(week_start, "%b %d, %Y"), "</b><br>",
+        "Discovery rate: ", scales::percent(discovery_track_rate, accuracy = 0.1), "<br>",
+        "New tracks: ", new_tracks, "<br>",
+        "Total songs: ", scales::comma(total_songs)
+      ),
+      data_id = as.character(week_start)
+    ),
+    color = "#4A90E2", size = 2, alpha = 0.7
+  ) +
+  labs(
+    title   = "Weekly Track Discovery Rate",
+    caption = "Proportion of songs that were first-ever listens · Green = LOESS trend",
+    x       = NULL,
+    y       = "Discovery Rate"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  theme_minimal() +
+  theme(
+    plot.title       = element_text(size = 14, face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+## Discovery Score
+
+> **Discovery Score** combines the track discovery rate (how much is new) and the inverse of repetition (how little you repeat) into a single 0–100 score. Higher = more exploratory listener.
+> 
+> Formula: `(discovery_track_rate × 50) + (50 / repetition_kpi)`
+
+```{r monthly-discovery-score}
+#| fig-width: 12
+#| fig-height: 5
+
+monthly_score <- discovery_with_rep %>%
+  mutate(year_month = floor_date(date, "month")) %>%
+  group_by(year_month) %>%
+  summarise(
+    avg_score      = round(mean(exploration_score, na.rm = TRUE), 1),
+    avg_disc_rate  = round(mean(discovery_track_rate, na.rm = TRUE), 4),
+    avg_rep_kpi    = round(mean(repetition_kpi, na.rm = TRUE), 2),
+    .groups        = "drop"
+  )
+
+p <- monthly_score %>%
+  ggplot(aes(x = year_month, y = avg_score)) +
+  geom_line(color = "#FFD700", linewidth = 1.2) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Discovery score: ", avg_score, "<br>",
+        "Avg disc. rate: ", scales::percent(avg_disc_rate, accuracy = 0.1), "<br>",
+        "Avg rep. KPI: ", avg_rep_kpi
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#FFD700", size = 3
+  ) +
+  labs(
+    title   = "Monthly Discovery Score",
+    caption = "Higher = more exploratory · Red = LOESS trend",
+    x       = NULL,
+    y       = "Discovery Score (0–100)"
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme_minimal() +
+  theme(
+    plot.title      = element_text(size = 14, face = "bold"),
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    panel.grid.minor = element_blank()
+  )
+
+make_girafe(p, height_svg = 5)
+```
+
+## Discovery Heatmap
+
+```{r discovery-heatmap}
+#| fig-width: 14
+#| fig-height: 6
+
+# Calendar-style heatmap: new tracks per day (last 2 years)
+heatmap_data <- discovery %>%
+  filter(date >= Sys.Date() - years(2)) %>%
+  mutate(
+    week_of_year = isoweek(date),
+    year         = factor(year(date)),
+    weekday      = wday(date, label = TRUE, abbr = TRUE, week_start = 1)
+  )
+
+if (nrow(heatmap_data) > 0) {
+  p <- heatmap_data %>%
+    ggplot(aes(x = week_of_year, y = weekday, fill = new_tracks)) +
+    geom_tile_interactive(
+      aes(
+        tooltip = paste0(format(date, "%b %d, %Y"), "<br>New tracks: ", new_tracks),
+        data_id = as.character(date)
+      ),
+      color = "white", linewidth = 0.3
+    ) +
+    facet_wrap(~ year, ncol = 1) +
+    scale_fill_gradient(low = "#2E4057", high = "#1DB954", name = "New Tracks") +
+    scale_x_continuous(breaks = c(1, 13, 26, 39, 52), labels = c("Jan", "Apr", "Jul", "Oct", "Dec")) +
+    labs(
+      title   = "New Tracks Discovered — Calendar Heatmap",
+      subtitle = "Last 2 years · Hover for date details",
+      x       = NULL,
+      y       = NULL
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title    = element_text(size = 14, face = "bold"),
+      plot.subtitle = element_text(size = 11, color = "gray60"),
+      panel.grid    = element_blank(),
+      strip.text    = element_text(face = "bold", size = 12)
+    )
+
+  make_girafe(p, width_svg = 12, height_svg = 5)
+} else {
+  cat("Insufficient data for heatmap.")
+}
+```
+
+## Discovery Stats Table
+
+```{r discovery-table}
+#| message: false
+
+monthly_discovery %>%
+  arrange(desc(year_month)) %>%
+  left_join(
+    monthly %>% select(year_month, repetition_kpi, unique_songs),
+    by = "year_month"
+  ) %>%
+  left_join(monthly_score %>% select(year_month, avg_score), by = "year_month") %>%
+  mutate(year_month_str = format(year_month, "%Y-%m")) %>%
+  select(
+    year_month_str,
+    new_artists,
+    new_tracks,
+    total_songs,
+    discovery_track_rate,
+    repetition_kpi,
+    avg_score
+  ) %>%
+  gt() %>%
+  tab_header(
+    title    = "Monthly Discovery Statistics",
+    subtitle = "New artists, tracks, and discovery metrics by month"
+  ) %>%
+  cols_label(
+    year_month_str       = "Month",
+    new_artists          = "New Artists",
+    new_tracks           = "New Tracks",
+    total_songs          = "Total Songs",
+    discovery_track_rate = "Discovery Rate",
+    repetition_kpi       = "Repetition KPI",
+    avg_score            = "Discovery Score"
+  ) %>%
+  fmt_number(columns = c(new_artists, new_tracks, total_songs), decimals = 0) %>%
+  fmt_percent(columns = discovery_track_rate, decimals = 1) %>%
+  fmt_number(columns = c(repetition_kpi, avg_score), decimals = 1) %>%
+  data_color(
+    columns = avg_score,
+    colors  = scales::col_numeric(palette = c("#FFE5E5", "#1DB954"), domain = NULL)
+  ) %>%
+  data_color(
+    columns = discovery_track_rate,
+    colors  = scales::col_numeric(palette = c("#FFF8E1", "#4A90E2"), domain = NULL)
+  ) %>%
+  opt_interactive(use_search = TRUE, use_filters = TRUE, page_size_default = 12)
+```
+
+---
+
+*Last updated on `r Sys.Date()`*

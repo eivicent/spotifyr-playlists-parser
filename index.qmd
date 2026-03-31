@@ -6,17 +6,281 @@ format:
     toc: false
 ---
 
-This dashboard provides comprehensive insights into your personal Spotify listening habits.
+```{r setup}
+#| message: false
+#| warning: false
 
-## Dashboard Pages
+library(here)
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
+```
 
-- **Summary**: Overview of your Spotify listening patterns and trends
-- **Weekly Patterns**: Analysis of weekly listening patterns and trends
-- **Artists**: Top artists analysis and listening streaks
+```{r load-data}
+#| message: false
+#| warning: false
+
+daily     <- load_daily_processed()
+weekly    <- load_weekly_processed()
+monthly   <- load_monthly_processed()
+discovery <- load_discovery()
+lifecycle <- load_lifecycle()
+sessions  <- load_sessions()
+
+# Current and last week
+today              <- Sys.Date()
+current_week_start <- floor_date(today, "week", week_start = 1)
+last_week_start    <- current_week_start - days(7)
+
+this_week <- weekly %>% filter(week_start == current_week_start)
+last_week <- weekly %>% filter(week_start == last_week_start)
+
+this_week_songs   <- if (nrow(this_week) > 0) this_week$total_songs   else 0
+last_week_songs   <- if (nrow(last_week) > 0) last_week$total_songs   else 0
+this_week_unique  <- if (nrow(this_week) > 0) this_week$unique_songs  else 0
+this_week_shannon <- if (nrow(this_week) > 0) round(this_week$shannon_diversity, 2) else NA
+last_week_shannon <- if (nrow(last_week) > 0) round(last_week$shannon_diversity, 2) else NA
+
+# New tracks this week
+this_week_discovery <- discovery %>%
+  filter(date >= current_week_start) %>%
+  summarise(new_tracks = sum(new_tracks), new_artists = sum(new_artists))
+new_tracks_this_week  <- this_week_discovery$new_tracks
+new_artists_this_week <- this_week_discovery$new_artists
+
+# Sessions this week
+sessions_this_week <- sessions %>%
+  filter(date >= current_week_start) %>%
+  nrow()
+
+# Top artist this week (from raw artist plays — approximate via lifecycle first_listen)
+# Use daily data for this week's top artist via raw files  
+top_artist_week <- tryCatch({
+  raw_week <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE) %>%
+    .[as.Date(stringr::str_remove(basename(.), "\\.csv$")) >= current_week_start] %>%
+    purrr::map_dfr(function(f) {
+      df <- tryCatch(read.csv(f, sep = ";", stringsAsFactors = FALSE), error = function(e) NULL)
+      if (is.null(df) || nrow(df) == 0) return(NULL)
+      df %>% dplyr::select(name)
+    })
+  if (nrow(raw_week) > 0) {
+    raw_week %>% dplyr::count(name, sort = TRUE) %>% dplyr::slice_head(n = 1) %>% dplyr::pull(name)
+  } else "—"
+}, error = function(e) "—")
+
+# New artists discovered this month (from lifecycle)
+current_month <- floor_date(today, "month")
+new_artists_month <- lifecycle %>%
+  filter(first_listen >= current_month) %>%
+  arrange(desc(total_plays)) %>%
+  head(8)
+
+# Last 8 complete weeks for mini-charts
+last_8_weeks <- weekly %>%
+  filter(week_start < current_week_start) %>%
+  arrange(desc(week_start)) %>%
+  head(8) %>%
+  arrange(week_start)
+```
+
+## This Week at a Glance
+
+```{r this-week-boxes}
+songs_delta <- this_week_songs - last_week_songs
+div_delta   <- if (!is.na(this_week_shannon) && !is.na(last_week_shannon)) this_week_shannon - last_week_shannon else NA
+
+songs_delta_label <- if (songs_delta > 0) paste0("+", songs_delta, " vs last wk") else paste0(songs_delta, " vs last wk")
+div_delta_label   <- if (!is.na(div_delta)) paste0(if (div_delta > 0) "+" else "", round(div_delta, 2), " vs last wk") else ""
+
+layout_column_wrap(
+  width = 1/3,
+  value_box(
+    title    = paste0("Songs (", songs_delta_label, ")"),
+    value    = scales::comma(this_week_songs),
+    showcase = bsicons::bs_icon("music-note-list"),
+    theme    = "primary"
+  ),
+  value_box(
+    title    = "New Tracks This Week",
+    value    = new_tracks_this_week,
+    showcase = bsicons::bs_icon("star"),
+    theme    = "success"
+  ),
+  value_box(
+    title    = "Sessions This Week",
+    value    = sessions_this_week,
+    showcase = bsicons::bs_icon("play-circle"),
+    theme    = "secondary"
+  )
+)
+```
+
+```{r this-week-boxes-2}
+layout_column_wrap(
+  width = 1/3,
+  value_box(
+    title    = "Top Artist This Week",
+    value    = top_artist_week,
+    showcase = bsicons::bs_icon("person-bounding-box"),
+    theme    = "info"
+  ),
+  value_box(
+    title    = "New Artists This Week",
+    value    = new_artists_this_week,
+    showcase = bsicons::bs_icon("person-plus"),
+    theme    = "warning"
+  ),
+  value_box(
+    title    = paste0("Diversity Index", if (nchar(div_delta_label) > 0) paste0(" (", div_delta_label, ")") else ""),
+    value    = if (!is.na(this_week_shannon)) this_week_shannon else "—",
+    showcase = bsicons::bs_icon("shuffle"),
+    theme    = "dark"
+  )
+)
+```
+
+## Last 8 Weeks
+
+```{r last-8-weeks}
+#| fig-width: 12
+#| fig-height: 4
+
+if (nrow(last_8_weeks) > 0) {
+  p_songs <- last_8_weeks %>%
+    ggplot(aes(x = week_start, y = total_songs)) +
+    geom_line(color = "#1DB954", linewidth = 1.2) +
+    geom_point_interactive(
+      aes(
+        tooltip = paste0("<b>", year_week, "</b><br>Songs: ", scales::comma(total_songs)),
+        data_id = year_week
+      ),
+      color = "#1DB954", size = 3
+    ) +
+    scale_x_date(date_labels = "%b %d") +
+    scale_y_continuous(labels = scales::comma) +
+    labs(title = "Songs / Week", x = NULL, y = NULL) +
+    theme_minimal() +
+    theme(
+      plot.title        = element_text(size = 12, face = "bold"),
+      panel.grid.minor  = element_blank(),
+      panel.grid.major.x = element_blank()
+    )
+
+  p_rep <- last_8_weeks %>%
+    ggplot(aes(x = week_start, y = repetition_kpi)) +
+    geom_line(color = "#FF6B6B", linewidth = 1.2) +
+    geom_point_interactive(
+      aes(
+        tooltip = paste0("<b>", year_week, "</b><br>Repetition KPI: ", repetition_kpi),
+        data_id = year_week
+      ),
+      color = "#FF6B6B", size = 3
+    ) +
+    scale_x_date(date_labels = "%b %d") +
+    labs(title = "Repetition KPI / Week", x = NULL, y = NULL) +
+    theme_minimal() +
+    theme(
+      plot.title        = element_text(size = 12, face = "bold"),
+      panel.grid.minor  = element_blank(),
+      panel.grid.major.x = element_blank()
+    )
+
+  htmltools::div(
+    style = "display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;",
+    make_girafe(p_songs, width_svg = 6, height_svg = 3),
+    make_girafe(p_rep,   width_svg = 6, height_svg = 3)
+  )
+} else {
+  cat("Not enough weekly data yet.")
+}
+```
+
+## New Artists This Month
+
+```{r new-artists-month}
+#| message: false
+
+if (nrow(new_artists_month) > 0) {
+  new_artists_month %>%
+    mutate(first_listen_str = format(first_listen, "%b %d, %Y")) %>%
+    select(artist, first_listen_str, total_plays, total_days) %>%
+    gt() %>%
+    tab_header(
+      title    = paste0("Artists Discovered in ", format(current_month, "%B %Y")),
+      subtitle = paste0(nrow(lifecycle %>% filter(first_listen >= current_month)), " new artists this month")
+    ) %>%
+    cols_label(
+      artist           = "Artist",
+      first_listen_str = "First Heard",
+      total_plays      = "Plays So Far",
+      total_days       = "Days Heard"
+    ) %>%
+    fmt_number(columns = c(total_plays, total_days), decimals = 0) %>%
+    data_color(
+      columns = total_plays,
+      colors  = scales::col_numeric(palette = c("#E3F2FD", "#1DB954"), domain = NULL)
+    )
+} else {
+  cat(paste0("No new artists discovered yet in ", format(current_month, "%B %Y"), "."))
+}
+```
+
+## Dashboard Sections
+
+```{r nav-cards}
+layout_column_wrap(
+  width = 1/3,
+  card(
+    card_header(bsicons::bs_icon("bar-chart-line"), " Summary"),
+    card_body(
+      "Overview of listening patterns — songs per day, weekly, and monthly trends with Repetition KPI and Diversity index.",
+      htmltools::tags$a("Open Summary →", href = "summary.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("calendar3"), " Monthly"),
+    card_body(
+      "Month-over-month comparisons, yearly heatmap, seasonal patterns, and full monthly statistics table.",
+      htmltools::tags$a("Open Monthly →", href = "monthly.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("calendar-week"), " Weekly Patterns"),
+    card_body(
+      "Day-of-week listening patterns, cumulative unique tracks per week, and historical distributions.",
+      htmltools::tags$a("Open Weekly →", href = "weekly-patterns.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("people"), " Artists"),
+    card_body(
+      "Top artists this month and all time, artist trend over time, and diversity over time.",
+      htmltools::tags$a("Open Artists →", href = "artists.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("vinyl"), " Discovery"),
+    card_body(
+      "New artists and tracks discovered over time, discovery rate, and your musical exploration score.",
+      htmltools::tags$a("Open Discovery →", href = "discovery.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("clock"), " Intraday"),
+    card_body(
+      "When you listen — hour-of-day heatmap, peak hours, and session length analysis.",
+      htmltools::tags$a("Open Intraday →", href = "intraday.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  ),
+  card(
+    card_header(bsicons::bs_icon("arrow-counterclockwise"), " Lifecycle"),
+    card_body(
+      "Artist lifecycle: sticky favorites, long-running relationships, comebacks, and drifted-away artists.",
+      htmltools::tags$a("Open Lifecycle →", href = "lifecycle.html", class = "btn btn-outline-primary btn-sm mt-2")
+    )
+  )
+)
+```
 
 ---
 
-*Data is automatically updated daily from my Spotify listening history*
-
-
-
+*Data updated daily · Last rendered on `r Sys.Date()`*

@@ -7,87 +7,61 @@ description: "Top artists by month and total listening statistics"
 #| message: false
 #| warning: false
 
-# Load here first (needed to source utils file)
 library(here)
-
-# Load standardized utilities
 source(here("src", "utils", "utils.R"))
 load_common_libraries()
+library(viridis)
 ```
 
 ```{r load-artist-data}
 #| message: false
 #| warning: false
 
-# Load artist data using standardized function
 all_artist_data <- load_artist_data()
 ```
 
-## Top 5 Artists - This Month, Last Month, and Historical
+## Top 5 Artists — This Month, Last Month, and Historical
 
 ```{r top-artists-combined}
 #| message: false
 
-# Get current month and last month
 current_month <- floor_date(Sys.Date(), "month")
-last_month <- current_month - months(1)
+last_month    <- current_month - months(1)
 
-# Filter data for current month
-current_month_data <- all_artist_data %>%
-  filter(year_month == current_month)
+top5 <- function(data, n = 5) {
+  data %>%
+    select(name, date) %>%
+    distinct() %>%
+    count(name, sort = TRUE) %>%
+    head(n) %>%
+    mutate(rank = row_number()) %>%
+    select(rank, artist = name, plays = n) %>%
+    mutate(combined = paste0(artist, "\n(", plays, " days)"))
+}
 
-# Filter data for last month
-last_month_data <- all_artist_data %>%
-  filter(year_month == last_month)
+top_5_current_month <- all_artist_data %>% filter(year_month == current_month) %>% top5()
+top_5_last_month    <- all_artist_data %>% filter(year_month == last_month)    %>% top5()
+top_5_historical    <- all_artist_data %>%                                          top5()
 
-# Calculate top 5 artists by days played for current month
-top_5_current_month <- current_month_data %>%
-  select(name, date) %>% unique() %>% 
-  count(name, sort = TRUE) %>%
-  head(5) %>%
-  mutate(rank = row_number()) %>%
-  select(rank, artist = name, plays = n) %>%
-  mutate(combined = paste0(artist, "\n(", plays, " days)"))
-
-# Calculate top 5 artists by days played for last month
-top_5_last_month <- last_month_data %>%
-  select(name, date) %>% unique() %>% 
-  count(name, sort = TRUE) %>%
-  head(5) %>%
-  mutate(rank = row_number()) %>%
-  select(rank, artist = name, plays = n) %>%
-  mutate(combined = paste0(artist, "\n(", plays, " days)"))
-
-# Calculate top 5 artists by days played historically (all time)
-top_5_historical <- all_artist_data %>%
-  select(name, date) %>% unique() %>% 
-  count(name, sort = TRUE) %>%
-  head(5) %>%
-  mutate(rank = row_number()) %>%
-  select(rank, artist = name, plays = n) %>%
-  mutate(combined = paste0(artist, "\n(", plays, " days)"))
-
-# Combine all three into one table
 combined_table <- data.frame(
-  Rank = 1:5,
-  `This Month` = top_5_current_month$combined[match(1:5, top_5_current_month$rank)],
-  `Last Month` = top_5_last_month$combined[match(1:5, top_5_last_month$rank)],
-  `Historical` = top_5_historical$combined[match(1:5, top_5_historical$rank)],
+  Rank        = 1:5,
+  `This Month`  = top_5_current_month$combined[match(1:5, top_5_current_month$rank)],
+  `Last Month`  = top_5_last_month$combined[match(1:5, top_5_last_month$rank)],
+  `Historical`  = top_5_historical$combined[match(1:5, top_5_historical$rank)],
   check.names = FALSE
 )
-
-# Replace NA with "-" for missing ranks
 combined_table[is.na(combined_table)] <- "-"
 
-# Display combined table
 combined_table %>%
   gt() %>%
   tab_header(
-    title = "Top 5 Artists Comparison",
-    subtitle = paste("This Month:", format(current_month, "%B %Y"), "| Last Month:", format(last_month, "%B %Y"), "| Historical: All Time")
+    title    = "Top 5 Artists Comparison",
+    subtitle = paste("This Month:", format(current_month, "%B %Y"),
+                     "| Last Month:", format(last_month, "%B %Y"),
+                     "| Historical: All Time")
   ) %>%
   cols_label(
-    Rank = "Rank",
+    Rank         = "Rank",
     `This Month` = paste("This Month", format(current_month, "(%B %Y)")),
     `Last Month` = paste("Last Month", format(last_month, "(%B %Y)")),
     `Historical` = "Historical (All Time)"
@@ -100,14 +74,12 @@ combined_table %>%
 ```{r top-artists-pivoted}
 #| message: false
 
-# Calculate top 5 artists by total number of songs listened
 top_5_total_songs <- all_artist_data %>%
   count(name, sort = TRUE) %>%
   head(5) %>%
   mutate(rank = row_number()) %>%
   select(rank, artist = name, total_songs = n)
 
-# Calculate top 5 artists by total different days listened
 top_5_total_days <- all_artist_data %>%
   select(name, date) %>%
   distinct() %>%
@@ -116,59 +88,127 @@ top_5_total_days <- all_artist_data %>%
   mutate(rank = row_number()) %>%
   select(rank, artist = name, total_days = n)
 
-# Helper function to safely get artist info or "-"
 get_artist_info <- function(artist_df, rank_num) {
   if (nrow(artist_df) >= rank_num && !is.na(artist_df$artist[rank_num])) {
     if ("total_songs" %in% names(artist_df)) {
-      return(paste0(artist_df$artist[rank_num], " (", artist_df$total_songs[rank_num], ")"))
+      paste0(artist_df$artist[rank_num], " (", artist_df$total_songs[rank_num], ")")
     } else {
-      return(paste0(artist_df$artist[rank_num], " (", artist_df$total_days[rank_num], ")"))
+      paste0(artist_df$artist[rank_num], " (", artist_df$total_days[rank_num], ")")
     }
   } else {
-    return("-")
+    "-"
   }
 }
 
-# Create pivoted table with metrics as rows and ranks as columns
 pivoted_table <- data.frame(
-  Metric = c("Total Songs", "Total Days"),
-  `Rank 1` = c(
-    get_artist_info(top_5_total_songs, 1),
-    get_artist_info(top_5_total_days, 1)
-  ),
-  `Rank 2` = c(
-    get_artist_info(top_5_total_songs, 2),
-    get_artist_info(top_5_total_days, 2)
-  ),
-  `Rank 3` = c(
-    get_artist_info(top_5_total_songs, 3),
-    get_artist_info(top_5_total_days, 3)
-  ),
-  `Rank 4` = c(
-    get_artist_info(top_5_total_songs, 4),
-    get_artist_info(top_5_total_days, 4)
-  ),
-  `Rank 5` = c(
-    get_artist_info(top_5_total_songs, 5),
-    get_artist_info(top_5_total_days, 5)
-  ),
+  Metric  = c("Total Songs", "Total Days"),
+  `Rank 1` = c(get_artist_info(top_5_total_songs, 1), get_artist_info(top_5_total_days, 1)),
+  `Rank 2` = c(get_artist_info(top_5_total_songs, 2), get_artist_info(top_5_total_days, 2)),
+  `Rank 3` = c(get_artist_info(top_5_total_songs, 3), get_artist_info(top_5_total_days, 3)),
+  `Rank 4` = c(get_artist_info(top_5_total_songs, 4), get_artist_info(top_5_total_days, 4)),
+  `Rank 5` = c(get_artist_info(top_5_total_songs, 5), get_artist_info(top_5_total_days, 5)),
   check.names = FALSE
 )
 
-# Display pivoted table
 pivoted_table %>%
   gt() %>%
   tab_header(
-    title = "Top 5 Artists by Total Songs and Days Listened",
+    title    = "Top 5 Artists by Total Songs and Days Listened",
     subtitle = "Metrics as rows, top 5 artists as columns (Artist Name (KPI))"
   ) %>%
-  cols_label(
-    Metric = "Metric"
-  ) %>%
+  cols_label(Metric = "Metric") %>%
   opt_interactive(use_search = FALSE)
+```
+
+## Top Artists Trend Over Time
+
+```{r top-artists-trend}
+#| fig-width: 14
+#| fig-height: 6
+
+# Monthly play counts for the top 10 all-time artists
+top10_artists <- all_artist_data %>%
+  count(name, sort = TRUE) %>%
+  head(10) %>%
+  pull(name)
+
+artist_monthly <- all_artist_data %>%
+  filter(name %in% top10_artists) %>%
+  count(name, year_month, name = "plays") %>%
+  arrange(year_month)
+
+p <- artist_monthly %>%
+  ggplot(aes(x = year_month, y = plays, color = name, group = name)) +
+  geom_line(linewidth = 1, alpha = 0.7) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0("<b>", name, "</b><br>", format(year_month, "%B %Y"), "<br>Plays: ", plays),
+      data_id = paste(name, year_month, sep = "-")
+    ),
+    size = 2
+  ) +
+  scale_color_viridis_d(option = "turbo", name = "Artist") +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  labs(
+    title    = "Monthly Plays — Top 10 Artists",
+    subtitle = "How often you listened to each top artist over time",
+    x        = NULL,
+    y        = "Songs Played"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title      = element_text(size = 16, face = "bold"),
+    plot.subtitle   = element_text(size = 12, color = "gray60"),
+    axis.text.x     = element_text(angle = 45, hjust = 1),
+    legend.position = "right"
+  )
+
+make_girafe(p, height_svg = 6)
+```
+
+## Artist Diversity Over Time
+
+```{r artist-diversity}
+#| fig-width: 14
+#| fig-height: 5
+
+diversity_data <- all_artist_data %>%
+  count(date, name = "n_artists_day") %>%
+  arrange(date) %>%
+  mutate(rolling_avg = zoo::rollmean(n_artists_day, k = 30, fill = NA, align = "right"))
+
+if (requireNamespace("zoo", quietly = TRUE)) {
+  p <- diversity_data %>%
+    ggplot(aes(x = date)) +
+    geom_line(aes(y = n_artists_day), color = "#4A90E2", alpha = 0.3, linewidth = 0.5) +
+    geom_line_interactive(
+      aes(
+        y       = rolling_avg,
+        tooltip = paste0(format(date, "%b %d, %Y"), "<br>30-day avg artists/day: ", round(rolling_avg, 1)),
+        data_id = as.character(date)
+      ),
+      color = "#1DB954", linewidth = 1.5, na.rm = TRUE
+    ) +
+    labs(
+      title    = "Artist Diversity Over Time",
+      subtitle = "Unique artists per day (blue) and 30-day rolling average (green)",
+      x        = NULL,
+      y        = "Unique Artists per Day"
+    ) +
+    scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+    theme_minimal() +
+    theme(
+      plot.title    = element_text(size = 16, face = "bold"),
+      plot.subtitle = element_text(size = 12, color = "gray60"),
+      axis.text.x   = element_text(angle = 45, hjust = 1)
+    )
+
+  make_girafe(p, height_svg = 5)
+} else {
+  cat("Install the 'zoo' package to see the rolling average chart.")
+}
 ```
 
 ---
 
 *Last updated on `r Sys.Date()`*
-

@@ -7,223 +7,456 @@ description: "Overview of your Spotify listening patterns and trends"
 #| message: false
 #| warning: false
 
-# Load here first (needed to source utils file)
 library(here)
-
-# Load standardized utilities
 source(here("src", "utils", "utils.R"))
 load_common_libraries()
-library(patchwork)  # Additional library for this document
 ```
 
 ```{r load-data}
 #| message: false
 #| warning: false
 
-# Load daily summary data using standardized function
-daily_summary <- load_daily_summary()
+daily   <- load_daily_processed()
+weekly  <- load_weekly_processed()
+monthly <- load_monthly_processed()
 ```
 
-
 ```{r value-boxes}
-# Create value boxes for key statistics
-total_days <- nrow(daily_summary)
-total_songs <- sum(daily_summary$songs)
-avg_songs <- round(mean(daily_summary$songs), 1)
-date_range <- paste(min(daily_summary$date), "to", max(daily_summary$date))
+total_days  <- nrow(daily)
+total_songs <- sum(daily$total_songs)
+avg_songs   <- round(mean(daily$total_songs), 1)
+date_range  <- paste(format(min(daily$date), "%b %d, %Y"), "–", format(max(daily$date), "%b %d, %Y"))
+total_unique <- sum(daily$unique_songs)
+overall_rep  <- round(total_songs / n_distinct(daily$date), 1)
 
-# Display value boxes in a 2x2 grid (2 columns)
 layout_column_wrap(
-  width = 1/2,
+  width = 1/3,
   value_box(
-    title = "Total Days",
-    value = total_days,
-    showcase = "📅",
-    theme = "success"
+    title    = "Total Days Tracked",
+    value    = scales::comma(total_days),
+    showcase = bsicons::bs_icon("calendar-check"),
+    theme    = "success"
   ),
   value_box(
-    title = "Total Songs",
-    value = scales::comma(total_songs),
-    showcase = "🎵",
-    theme = "primary"
+    title    = "Total Songs Listened",
+    value    = scales::comma(total_songs),
+    showcase = bsicons::bs_icon("music-note-list"),
+    theme    = "primary"
   ),
   value_box(
-    title = "Avg Songs/Day",
-    value = avg_songs,
-    showcase = "📊",
-    theme = "secondary"
-  ),
-  value_box(
-    title = "Date Range",
-    value = date_range,
-    showcase = "📆",
-    theme = "dark"
+    title    = "Avg Songs / Day",
+    value    = avg_songs,
+    showcase = bsicons::bs_icon("bar-chart"),
+    theme    = "secondary"
   )
 )
 ```
 
-## Daily Listening Patterns
+```{r value-boxes-2}
+layout_column_wrap(
+  width = 1/2,
+  value_box(
+    title    = "Date Range",
+    value    = date_range,
+    showcase = bsicons::bs_icon("calendar-range"),
+    theme    = "dark"
+  ),
+  value_box(
+    title    = "Overall Repetition KPI",
+    value    = round(total_songs / sum(daily$unique_songs), 2),
+    showcase = bsicons::bs_icon("arrow-repeat"),
+    theme    = "warning"
+  )
+)
+```
 
-```{r daily-plots}
+## Songs Listened
+
+::: {.panel-tabset}
+
+### Daily
+
+```{r daily-songs}
 #| fig-width: 12
-#| fig-height: 6
+#| fig-height: 5
 
-# Create songs plot
-daily_summary %>%
-  ggplot(aes(x = date, y = songs)) +
-  geom_line(color = "#1DB954", size = 1) +
-  geom_point(color = "#1DB954", size = 1.5, alpha = 0.7) +
-  geom_smooth(method = "loess", color = "#FF6B6B", size = 1, se = TRUE, alpha = 0.3) +
+daily_with_week <- daily %>%
+  mutate(week = floor_date(date, "week")) %>%
+  group_by(week) %>%
+  mutate(weekly_avg = mean(total_songs)) %>%
+  ungroup()
+
+p <- daily_with_week %>%
+  ggplot(aes(x = date, y = total_songs)) +
+  geom_line(color = "#1DB954", linewidth = 0.8, alpha = 0.6) +
+  geom_line(aes(y = weekly_avg), color = "#4A90E2", linewidth = 1, alpha = 0.8) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(date, "%b %d, %Y"), "</b><br>",
+        "Songs: ", total_songs, "<br>",
+        "Unique: ", unique_songs, "<br>",
+        "Rep. KPI: ", repetition_kpi
+      ),
+      data_id = as.character(date)
+    ),
+    color = "#1DB954", size = 1.5, alpha = 0.5
+  ) +
   labs(
-    title = "Daily Songs Listened",
-    subtitle = paste("From", min(daily_summary$date), "to", max(daily_summary$date)),
-    x = "Date",
-    y = "Number of Songs",
-    caption = "Data from Spotify listening history"
+    title   = "Daily Songs Listened",
+    caption = "Green = daily · Blue = 7-day rolling avg · Red = LOESS trend",
+    x       = NULL,
+    y       = NULL
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 10, color = "gray60"),
-    axis.title = element_text(size = 10),
-    panel.grid.minor = element_blank(),
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.minor  = element_blank(),
     panel.grid.major.x = element_blank()
   ) +
-  scale_x_date(
-    date_labels = "%b %Y", 
-    date_breaks = "2 months",
-    date_minor_breaks = "1 month"
-  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
   scale_y_continuous(breaks = scales::pretty_breaks(n = 6))
+
+make_girafe(p, height_svg = 5)
 ```
 
-## Monthly Summary
+### Weekly
 
-```{r monthly-summary}
-#| message: false
+```{r weekly-songs}
+#| fig-width: 12
+#| fig-height: 5
 
-# Create monthly summary
-monthly_summary <- daily_summary %>%
-  mutate(
-    year_month = floor_date(date, "month")
-  ) %>%
-  group_by(year_month) %>%
-  summarise(
-    total_songs = sum(songs),
-    days_listened = n(),
-    avg_songs_per_day = round(mean(songs), 2),
-    .groups = "drop"
-  ) %>%
-  arrange(year_month)
-
-# Create monthly trend plot
-monthly_plot <- monthly_summary %>%
-  ggplot(aes(x = year_month, y = total_songs)) +
-  geom_line(color = "#1DB954", size = 1.2) +
-  geom_point(color = "#1DB954", size = 2) +
-  geom_smooth(method = "loess", color = "#FF6B6B", size = 1, se = TRUE, alpha = 0.3) +
+p <- weekly %>%
+  ggplot(aes(x = week_start, y = total_songs)) +
+  geom_line(color = "#1DB954", linewidth = 1) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", year_week, "</b><br>",
+        "Week of ", format(week_start, "%b %d, %Y"), "<br>",
+        "Total songs: ", scales::comma(total_songs), "<br>",
+        "Avg/day: ", avg_songs_per_day, "<br>",
+        "Unique: ", scales::comma(unique_songs)
+      ),
+      data_id = year_week
+    ),
+    color = "#1DB954", size = 2
+  ) +
   labs(
-    title = "Monthly Song Count Trend",
-    x = "Month",
-    y = "Total Songs",
-    caption = "Monthly totals with trend line"
+    title   = "Weekly Songs Listened",
+    caption = "Each point is one week · Red band = LOESS trend",
+    x       = NULL,
+    y       = "Total Songs"
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1)
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.minor  = element_blank(),
+    panel.grid.major.x = element_blank()
   ) +
-  scale_x_date(
-    date_labels = "%b %Y", 
-    date_breaks = "3 months",
-    date_minor_breaks = "1 month"
-  )
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  scale_y_continuous(labels = scales::comma, breaks = scales::pretty_breaks(n = 6))
 
-print(monthly_plot)
-
-# Display monthly summary table
-monthly_summary %>%
-  mutate(
-    year_month = format(year_month, "%Y-%m")
-  ) %>%
-  arrange(desc(year_month)) %>% 
-  select(year_month, total_songs, days_listened, avg_songs_per_day) %>%
-  gt() %>%
-  tab_header(
-    title = "Monthly Listening Summary",
-    subtitle = "Songs, days listened, and daily averages by month"
-  ) %>%
-  cols_label(
-    year_month = "Month",
-    total_songs = "Total Songs",
-    days_listened = "Days Listened",
-    avg_songs_per_day = "Avg Songs/Day"
-  ) %>%
-  fmt_number(
-    columns = c(total_songs, avg_songs_per_day),
-    decimals = 0
-  ) %>%
-  fmt_number(
-    columns = days_listened,
-    decimals = 1
-  ) %>%
-  data_color(
-    columns = total_songs,
-    colors = scales::col_numeric(
-      palette = c("#FFE5E5", "#FF6B6B"),
-      domain = NULL
-    )
-  ) %>%
-  opt_interactive(use_search = TRUE, use_filters = TRUE)
+make_girafe(p, height_svg = 5)
 ```
 
-## Summary Statistics
+### Monthly
 
-```{r summary-stats}
-#| message: false
+```{r monthly-songs}
+#| fig-width: 12
+#| fig-height: 5
 
-# Calculate comprehensive statistics
-stats <- daily_summary %>%
-  summarise(
-    `Total Days` = n(),
-    `Total Songs` = sum(songs),
-    `Average per Day` = round(mean(songs), 2),
-    `Median per Day` = median(songs),
-    `Max in One Day` = max(songs),
-    `Min in One Day` = min(songs),
-    `Standard Deviation` = round(sd(songs), 2),
-    `Date Range (Days)` = as.numeric(max(date) - min(date)) + 1
-  ) %>%
-  pivot_longer(everything(), names_to = "Metric", values_to = "Value")
+p <- monthly %>%
+  ggplot(aes(x = year_month, y = total_songs)) +
+  geom_line(color = "#1DB954", linewidth = 1.2) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Total songs: ", scales::comma(total_songs), "<br>",
+        "Unique: ", scales::comma(unique_songs), "<br>",
+        "Avg/day: ", avg_songs_per_day, "<br>",
+        "Avg/week: ", avg_songs_per_week
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#1DB954", size = 3
+  ) +
+  labs(
+    title   = "Monthly Song Count Trend",
+    caption = "Each point is one month · Red band = LOESS trend",
+    x       = NULL,
+    y       = "Total Songs"
+  ) +
+  scale_y_continuous(limits = c(0, NA), labels = scales::comma) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor  = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months", date_minor_breaks = "1 month")
 
-# Display statistics
-stats %>%
-  gt() %>%
-  tab_header(
-    title = "Listening Statistics Summary",
-    subtitle = "Comprehensive overview of your listening habits"
-  ) %>%
-  cols_label(
-    Metric = "Metric",
-    Value = "Value"
-  ) %>%
-  fmt_number(
-    columns = Value,
-    decimals = 2
-  ) %>%
-  data_color(
-    columns = Value,
-    colors = scales::col_numeric(
-      palette = c("#F0F8FF", "#4A90E2"),
-      domain = NULL
-    )
-  ) %>%
-  opt_interactive(use_search = TRUE)
+make_girafe(p, height_svg = 5)
 ```
+
+:::
+
+## Repetition KPI
+
+> **Repetition KPI = Total Songs / Unique Songs** — A value of 1 means every listen was a new track. Higher values mean more replaying of the same songs. Lower is more exploratory.
+
+::: {.panel-tabset}
+
+### Daily
+
+```{r daily-repetition}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- daily %>%
+  ggplot(aes(x = date, y = repetition_kpi)) +
+  geom_line(color = "#FF6B6B", linewidth = 0.6, alpha = 0.5) +
+  geom_smooth(method = "loess", color = "#4A90E2", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(date, "%b %d, %Y"), "</b><br>",
+        "Rep. KPI: ", repetition_kpi, "<br>",
+        "Total: ", total_songs, " · Unique: ", unique_songs
+      ),
+      data_id = as.character(date)
+    ),
+    color = "#FF6B6B", size = 1.5, alpha = 0.5
+  ) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50", linewidth = 0.8) +
+  labs(
+    title   = "Daily Repetition KPI",
+    caption = "Dashed line at 1 = no repetition · Blue = LOESS trend",
+    x       = NULL,
+    y       = "Repetition KPI"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.minor  = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+### Weekly
+
+```{r weekly-repetition}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- weekly %>%
+  ggplot(aes(x = week_start, y = repetition_kpi)) +
+  geom_line(color = "#FF6B6B", linewidth = 1) +
+  geom_smooth(method = "loess", color = "#4A90E2", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", year_week, "</b><br>",
+        "Rep. KPI: ", repetition_kpi, "<br>",
+        "Total: ", scales::comma(total_songs), " · Unique: ", scales::comma(unique_songs)
+      ),
+      data_id = year_week
+    ),
+    color = "#FF6B6B", size = 2.5
+  ) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50", linewidth = 0.8) +
+  labs(
+    title   = "Weekly Repetition KPI",
+    caption = "Dashed line at 1 = no repetition · Blue = LOESS trend",
+    x       = NULL,
+    y       = "Repetition KPI"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.minor  = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+### Monthly
+
+```{r monthly-repetition}
+#| fig-width: 12
+#| fig-height: 5
+
+latest_month_rep <- monthly %>% slice_tail(n = 1) %>% pull(repetition_kpi)
+
+p <- monthly %>%
+  ggplot(aes(x = year_month, y = repetition_kpi)) +
+  geom_line(color = "#FF6B6B", linewidth = 1.2) +
+  geom_smooth(method = "loess", color = "#4A90E2", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Rep. KPI: ", repetition_kpi, "<br>",
+        "Total: ", scales::comma(total_songs), " · Unique: ", scales::comma(unique_songs)
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#FF6B6B", size = 3
+  ) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "gray50", linewidth = 0.8) +
+  labs(
+    title   = "Monthly Repetition KPI",
+    caption = "Dashed line at 1 = no repetition · Blue = LOESS trend",
+    x       = NULL,
+    y       = "Repetition KPI"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor  = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+:::
+
+## Artist Diversity
+
+> **Shannon Diversity** measures how evenly your listening is spread across artists. Higher = more varied mix (no single artist dominates). **Concentration Top-5** shows what fraction of plays comes from your top-5 artists — lower means a more diverse mix.
+
+::: {.panel-tabset}
+
+### Weekly
+
+```{r weekly-diversity}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- weekly %>%
+  ggplot(aes(x = week_start, y = shannon_diversity)) +
+  geom_line(color = "#4A90E2", linewidth = 1) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", year_week, "</b><br>",
+        "Shannon diversity: ", round(shannon_diversity, 2), "<br>",
+        "Top-5 concentration: ", scales::percent(concentration_top5, accuracy = 1), "<br>",
+        "Unique artists: ", unique_artists
+      ),
+      data_id = year_week
+    ),
+    color = "#4A90E2", size = 2
+  ) +
+  labs(
+    title   = "Weekly Shannon Diversity Index",
+    caption = "Higher = more evenly spread across artists · Red = LOESS trend",
+    x       = NULL,
+    y       = "Shannon Diversity"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.minor  = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "6 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+### Monthly
+
+```{r monthly-diversity}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- monthly %>%
+  ggplot(aes(x = year_month, y = shannon_diversity)) +
+  geom_line(color = "#4A90E2", linewidth = 1.2) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Shannon diversity: ", round(shannon_diversity, 2), "<br>",
+        "Top-5 concentration: ", scales::percent(concentration_top5, accuracy = 1), "<br>",
+        "Unique artists: ", unique_artists
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#4A90E2", size = 3
+  ) +
+  labs(
+    title   = "Monthly Shannon Diversity Index",
+    caption = "Higher = more evenly spread across artists · Red = LOESS trend",
+    x       = NULL,
+    y       = "Shannon Diversity"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor  = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+### Top-5 Concentration
+
+```{r monthly-concentration}
+#| fig-width: 12
+#| fig-height: 5
+
+p <- monthly %>%
+  ggplot(aes(x = year_month, y = concentration_top5)) +
+  geom_line(color = "#FFD700", linewidth = 1.2, alpha = 0.7) +
+  geom_smooth(method = "loess", color = "#FF6B6B", linewidth = 1.2, se = TRUE, alpha = 0.2) +
+  geom_point_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", format(year_month, "%B %Y"), "</b><br>",
+        "Top-5 concentration: ", scales::percent(concentration_top5, accuracy = 1), "<br>",
+        "Shannon diversity: ", round(shannon_diversity, 2)
+      ),
+      data_id = as.character(year_month)
+    ),
+    color = "#FFD700", size = 3
+  ) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(
+    title   = "Monthly Top-5 Artist Concentration",
+    caption = "Lower = more diverse listening · Red = LOESS trend",
+    x       = NULL,
+    y       = "Share of plays by top 5 artists"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title        = element_text(size = 14, face = "bold"),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor  = element_blank()
+  ) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months")
+
+make_girafe(p, height_svg = 5)
+```
+
+:::
 
 ---
 
 *Last updated on `r Sys.Date()`*
-
-
-

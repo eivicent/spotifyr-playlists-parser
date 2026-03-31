@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Spotify Listening Dashboard",
     "section": "",
-    "text": "This dashboard provides comprehensive insights into your personal Spotify listening habits."
+    "text": "Songs (-5 vs last wk)\n162\n\n\n\n\n\n\n\n\n\n\n\n\nNew Tracks This Week\n64\n\n\n\n\n\n\n\n\n\n\n\n\n\nSessions This Week\n23\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTop Artist This Week\nBrooks Prumo Orchestra\n\n\n\n\n\n\n\n\n\n\n\n\n\nNew Artists This Week\n17\n\n\n\n\n\n\n\n\n\n\n\n\n\nDiversity Index (-0.24 vs last wk)\n3.85"
   },
   {
     "objectID": "index.html#features",
@@ -25,7 +25,7 @@
     "href": "summary.html",
     "title": "Listening Summary",
     "section": "",
-    "text": "📅\n\nTotal Days\n727\n\n\n\n\n\n\n\n\n\n\n🎵\n\nTotal Songs\n21,015\n\n\n\n\n\n\n\n\n\n\n📊\n\nAvg Songs/Day\n28.9\n\n\n\n\n\n\n\n\n\n\n📆\n\nDate Range\n2023-08-08 to 2025-11-09"
+    "text": "Total Days Tracked\n838\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTotal Songs Listened\n23,781\n\n\n\n\n\n\n\n\n\n\n\n\nAvg Songs / Day\n28.4\nDate Range\nAug 08, 2023 – Mar 12, 2026\n\n\n\n\n\n\n\n\n\n\n\n\n\nOverall Repetition KPI\n1.04"
   },
   {
     "objectID": "summary.html#data-processing",
@@ -67,7 +67,7 @@
     "href": "summary.html#summary-statistics",
     "title": "Listening Summary",
     "section": "Summary Statistics",
-    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2025-11-09"
+    "text": "Summary Statistics\n\n\n\n\n\nListening Statistics Summary\nComprehensive overview of your listening habits\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
   },
   {
     "objectID": "artists.html#top-5-artists---current-month",
@@ -88,7 +88,7 @@
     "href": "artists.html",
     "title": "Artists Analysis",
     "section": "",
-    "text": "Top 5 Artists Comparison\nThis Month: November 2025 | Last Month: October 2025 | Historical: All Time"
+    "text": "Top 5 Artists Comparison\nThis Month: March 2026 | Last Month: February 2026 | Historical: All Time"
   },
   {
     "objectID": "index.html#dashboard-pages",
@@ -109,7 +109,7 @@
     "href": "weekly-patterns.html#weekly-pattern-statistics",
     "title": "Weekly Patterns",
     "section": "Weekly Pattern Statistics",
-    "text": "Weekly Pattern Statistics\n\n\n\n\n\nWeekly Pattern Statistics\nSummary statistics by day of week (historical data)\n\n\n\n\n\n\n\nLast updated on 2025-11-09"
+    "text": "Weekly Pattern Statistics\n\n\n\n\n\nWeekly Pattern Statistics\nSummary statistics by day of week (historical data)\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
   },
   {
     "objectID": "artists.html#top-5-artists---this-month-last-month-and-historical",
@@ -123,21 +123,21 @@
     "href": "artists.html#top-5-artists-by-total-songs-and-days-listened",
     "title": "Artists Analysis",
     "section": "Top 5 Artists by Total Songs and Days Listened",
-    "text": "Top 5 Artists by Total Songs and Days Listened\n\n\n\n\n\nTop 5 Artists by Total Songs and Days Listened\nMetrics as rows, top 5 artists as columns (Artist Name (KPI))\n\n\n\n\n\n\n\nLast updated on 2025-11-12"
+    "text": "Top 5 Artists by Total Songs and Days Listened\n\n\n\n\n\nTop 5 Artists by Total Songs and Days Listened\nMetrics as rows, top 5 artists as columns (Artist Name (KPI))"
   },
   {
     "objectID": "monthly.html",
     "href": "monthly.html",
     "title": "Monthly Statistics",
     "section": "",
-    "text": "🎵\n\nJanuary 2026\n229\n\n\n\n\n\n\n\n\n\n\n📅\n\nDecember 2025\n729\n\n\n\n\n\n\n\n\n\n\n📉\n\nMonth-over-Month\n-68.6%\n\n\n\n\n\n\n\n\n\n\n📉\n\nYear-over-Year\n-66.6%"
+    "text": "March 2026\n359\n\n\n\n\n\n\n\n\n\n\n\n\n\nFebruary 2026\n501\n\n\n\n\n\n\n\n\n\n\n\n\nMonth-over-Month\n-28.3%\n\n\n\n\n\n\n\n\n\n\n\n\nYear-over-Year\n-53.9%"
   },
   {
     "objectID": "monthly.html#current-month-overview",
     "href": "monthly.html#current-month-overview",
     "title": "Monthly Statistics",
     "section": "",
-    "text": "🎵\n\nJanuary 2026\n229\n\n\n\n\n\n\n\n\n\n\n📅\n\nDecember 2025\n729\n\n\n\n\n\n\n\n\n\n\n📉\n\nMonth-over-Month\n-68.6%\n\n\n\n\n\n\n\n\n\n\n📉\n\nYear-over-Year\n-66.6%"
+    "text": "March 2026\n359\n\n\n\n\n\n\n\n\n\n\n\n\n\nFebruary 2026\n501\n\n\n\n\n\n\n\n\n\n\n\n\nMonth-over-Month\n-28.3%\n\n\n\n\n\n\n\n\n\n\n\n\nYear-over-Year\n-53.9%"
   },
   {
     "objectID": "monthly.html#monthly-trend",
@@ -186,6 +186,223 @@
     "href": "monthly.html#month-over-month-changes",
     "title": "Monthly Statistics",
     "section": "Month-over-Month Changes",
-    "text": "Month-over-Month Changes\n\n\n\n\n\n\n\n\n\n\nLast updated on 2026-01-15"
+    "text": "Month-over-Month Changes\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "summary.html#songs-listened",
+    "href": "summary.html#songs-listened",
+    "title": "Listening Summary",
+    "section": "Songs Listened",
+    "text": "Songs Listened\n\nDailyWeeklyMonthly"
+  },
+  {
+    "objectID": "summary.html#repetition-kpi",
+    "href": "summary.html#repetition-kpi",
+    "title": "Listening Summary",
+    "section": "Repetition KPI",
+    "text": "Repetition KPI\n\nRepetition KPI = Total Songs / Unique Songs — A value of 1 means every listen was a new track. Higher values mean more replaying of the same songs. Lower is more exploratory.\n\n\nDailyWeeklyMonthly"
+  },
+  {
+    "objectID": "weekly-patterns.html#cumulative-unique-tracks-within-week",
+    "href": "weekly-patterns.html#cumulative-unique-tracks-within-week",
+    "title": "Weekly Patterns",
+    "section": "Cumulative Unique Tracks Within Week",
+    "text": "Cumulative Unique Tracks Within Week"
+  },
+  {
+    "objectID": "artists.html#top-5-artists-this-month-last-month-and-historical",
+    "href": "artists.html#top-5-artists-this-month-last-month-and-historical",
+    "title": "Artists Analysis",
+    "section": "",
+    "text": "Top 5 Artists Comparison\nThis Month: March 2026 | Last Month: February 2026 | Historical: All Time"
+  },
+  {
+    "objectID": "artists.html#top-artists-trend-over-time",
+    "href": "artists.html#top-artists-trend-over-time",
+    "title": "Artists Analysis",
+    "section": "Top Artists Trend Over Time",
+    "text": "Top Artists Trend Over Time"
+  },
+  {
+    "objectID": "artists.html#artist-diversity-over-time",
+    "href": "artists.html#artist-diversity-over-time",
+    "title": "Artists Analysis",
+    "section": "Artist Diversity Over Time",
+    "text": "Artist Diversity Over Time\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "discovery.html",
+    "href": "discovery.html",
+    "title": "Musical Discovery",
+    "section": "",
+    "text": "Total Artists Discovered\n3,730\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTotal Tracks Discovered\n9,106\n\n\n\n\n\n\n\n\n\n\n\n\nNew Tracks — Mar 2026\n133\n\n\n\n\n\n\n\n\n\n\n\n\n\nNew Artists — Mar 2026\n51"
+  },
+  {
+    "objectID": "discovery.html#discovery-overview",
+    "href": "discovery.html#discovery-overview",
+    "title": "Musical Discovery",
+    "section": "",
+    "text": "Total Artists Discovered\n3,730\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTotal Tracks Discovered\n9,106\n\n\n\n\n\n\n\n\n\n\n\n\nNew Tracks — Mar 2026\n133\n\n\n\n\n\n\n\n\n\n\n\n\n\nNew Artists — Mar 2026\n51"
+  },
+  {
+    "objectID": "discovery.html#cumulative-discovery",
+    "href": "discovery.html#cumulative-discovery",
+    "title": "Musical Discovery",
+    "section": "Cumulative Discovery",
+    "text": "Cumulative Discovery\n\nArtistsTracks"
+  },
+  {
+    "objectID": "discovery.html#new-discoveries-per-month",
+    "href": "discovery.html#new-discoveries-per-month",
+    "title": "Musical Discovery",
+    "section": "New Discoveries Per Month",
+    "text": "New Discoveries Per Month\n\nNew ArtistsNew Tracks"
+  },
+  {
+    "objectID": "discovery.html#discovery-rate-over-time",
+    "href": "discovery.html#discovery-rate-over-time",
+    "title": "Musical Discovery",
+    "section": "Discovery Rate Over Time",
+    "text": "Discovery Rate Over Time\n\nDiscovery Rate = proportion of today’s songs that were first-ever listens. A rate of 0.5 means half of what you listened to today was new to you."
+  },
+  {
+    "objectID": "discovery.html#discovery-score",
+    "href": "discovery.html#discovery-score",
+    "title": "Musical Discovery",
+    "section": "Discovery Score",
+    "text": "Discovery Score\n\nDiscovery Score combines the track discovery rate (how much is new) and the inverse of repetition (how little you repeat) into a single 0–100 score. Higher = more exploratory listener.\nFormula: (discovery_track_rate × 50) + (50 / repetition_kpi)"
+  },
+  {
+    "objectID": "discovery.html#discovery-heatmap",
+    "href": "discovery.html#discovery-heatmap",
+    "title": "Musical Discovery",
+    "section": "Discovery Heatmap",
+    "text": "Discovery Heatmap"
+  },
+  {
+    "objectID": "discovery.html#discovery-stats-table",
+    "href": "discovery.html#discovery-stats-table",
+    "title": "Musical Discovery",
+    "section": "Discovery Stats Table",
+    "text": "Discovery Stats Table\n\n\n\n\n\nMonthly Discovery Statistics\nNew artists, tracks, and discovery metrics by month\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "intraday.html",
+    "href": "intraday.html",
+    "title": "Intraday Patterns",
+    "section": "",
+    "text": "Peak Listening Hour\n4:00–5:00\n\n\n\n\n\n\n\n\n\n\n\n\n\nAvg Sessions / Day\n3.5\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAvg Songs / Session\n8\n\n\n\n\n\n\n\n\n\n\n\n\nPeak Session Start\n14:00"
+  },
+  {
+    "objectID": "intraday.html#listening-overview",
+    "href": "intraday.html#listening-overview",
+    "title": "Intraday Patterns",
+    "section": "",
+    "text": "Peak Listening Hour\n4:00–5:00\n\n\n\n\n\n\n\n\n\n\n\n\n\nAvg Sessions / Day\n3.5\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAvg Songs / Session\n8\n\n\n\n\n\n\n\n\n\n\n\n\nPeak Session Start\n14:00"
+  },
+  {
+    "objectID": "intraday.html#hour-weekday-heatmap",
+    "href": "intraday.html#hour-weekday-heatmap",
+    "title": "Intraday Patterns",
+    "section": "Hour × Weekday Heatmap",
+    "text": "Hour × Weekday Heatmap\n\nAverage songs played per hour slot, aggregated across all days. Brighter = more listening."
+  },
+  {
+    "objectID": "intraday.html#average-plays-by-hour-of-day",
+    "href": "intraday.html#average-plays-by-hour-of-day",
+    "title": "Intraday Patterns",
+    "section": "Average Plays by Hour of Day",
+    "text": "Average Plays by Hour of Day"
+  },
+  {
+    "objectID": "intraday.html#listening-sessions",
+    "href": "intraday.html#listening-sessions",
+    "title": "Intraday Patterns",
+    "section": "Listening Sessions",
+    "text": "Listening Sessions\n\nSession Length Distribution\n\n\n\n\n\n\n\n\nWhen Sessions Start\n\n\n\n\n\n\n\n\nMonthly Session Trends\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "lifecycle.html",
+    "href": "lifecycle.html",
+    "title": "Artist Lifecycle",
+    "section": "",
+    "text": "Total Artists Heard\n3,730\n\n\n\n\n\n\n\n\n\n\n\n\nCurrently Active\n243\n\n\n\n\n\n\n\n\n\n\n\n\n\nComeback Artists\n1,233\n\n\n\n\n\n\n\n\n\n\n\n\nDrifted Away\n401"
+  },
+  {
+    "objectID": "lifecycle.html#artist-overview",
+    "href": "lifecycle.html#artist-overview",
+    "title": "Artist Lifecycle",
+    "section": "",
+    "text": "Total Artists Heard\n3,730\n\n\n\n\n\n\n\n\n\n\n\n\nCurrently Active\n243\n\n\n\n\n\n\n\n\n\n\n\n\n\nComeback Artists\n1,233\n\n\n\n\n\n\n\n\n\n\n\n\nDrifted Away\n401"
+  },
+  {
+    "objectID": "lifecycle.html#sticky-artists",
+    "href": "lifecycle.html#sticky-artists",
+    "title": "Artist Lifecycle",
+    "section": "Sticky Artists",
+    "text": "Sticky Artists\n\nStickiness = fraction of days between first and last listen that you actually played this artist. A score of 1.0 would mean you listened every single day since discovery."
+  },
+  {
+    "objectID": "lifecycle.html#long-running-favorites",
+    "href": "lifecycle.html#long-running-favorites",
+    "title": "Artist Lifecycle",
+    "section": "Long-running Favorites",
+    "text": "Long-running Favorites\n\nArtists with the longest active span (days between first and last listen)."
+  },
+  {
+    "objectID": "lifecycle.html#comeback-artists",
+    "href": "lifecycle.html#comeback-artists",
+    "title": "Artist Lifecycle",
+    "section": "Comeback Artists",
+    "text": "Comeback Artists\n\nArtists who disappeared for 90+ days and then returned. More comebacks = a more cyclical listening pattern."
+  },
+  {
+    "objectID": "lifecycle.html#drifted-away",
+    "href": "lifecycle.html#drifted-away",
+    "title": "Artist Lifecycle",
+    "section": "Drifted Away",
+    "text": "Drifted Away\n\nArtists you used to love but haven’t listened to in 180+ days — sorted by how much you played them historically.\n\n\n\n\n\n\nArtists You've Drifted Away From\nNot heard in 180+ days · Sorted by historical plays · Max 30 shown"
+  },
+  {
+    "objectID": "lifecycle.html#full-artist-lifecycle-table",
+    "href": "lifecycle.html#full-artist-lifecycle-table",
+    "title": "Artist Lifecycle",
+    "section": "Full Artist Lifecycle Table",
+    "text": "Full Artist Lifecycle Table\n\n\n\n\n\nAll Artists\n3,730 artists in listening history\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "summary.html#artist-diversity",
+    "href": "summary.html#artist-diversity",
+    "title": "Listening Summary",
+    "section": "Artist Diversity",
+    "text": "Artist Diversity\n\nShannon Diversity measures how evenly your listening is spread across artists. Higher = more varied mix (no single artist dominates). Concentration Top-5 shows what fraction of plays comes from your top-5 artists — lower means a more diverse mix.\n\n\nWeeklyMonthlyTop-5 Concentration\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLast updated on 2026-03-13"
+  },
+  {
+    "objectID": "index.html#this-week-at-a-glance",
+    "href": "index.html#this-week-at-a-glance",
+    "title": "Spotify Listening Dashboard",
+    "section": "",
+    "text": "Songs (-5 vs last wk)\n162\n\n\n\n\n\n\n\n\n\n\n\n\nNew Tracks This Week\n64\n\n\n\n\n\n\n\n\n\n\n\n\n\nSessions This Week\n23\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTop Artist This Week\nBrooks Prumo Orchestra\n\n\n\n\n\n\n\n\n\n\n\n\n\nNew Artists This Week\n17\n\n\n\n\n\n\n\n\n\n\n\n\n\nDiversity Index (-0.24 vs last wk)\n3.85"
+  },
+  {
+    "objectID": "index.html#last-8-weeks",
+    "href": "index.html#last-8-weeks",
+    "title": "Spotify Listening Dashboard",
+    "section": "Last 8 Weeks",
+    "text": "Last 8 Weeks"
+  },
+  {
+    "objectID": "index.html#new-artists-this-month",
+    "href": "index.html#new-artists-this-month",
+    "title": "Spotify Listening Dashboard",
+    "section": "New Artists This Month",
+    "text": "New Artists This Month\n\n\n\n\n\n\n\n\nArtists Discovered in March 2026\n\n\n51 new artists this month\n\n\nArtist\nFirst Heard\nPlays So Far\nDays Heard\n\n\n\n\nThe Juju Orchestra\nMar 10, 2026\n11\n2\n\n\nStomp Stomp Swing Band\nMar 12, 2026\n8\n1\n\n\nRubén Blades\nMar 01, 2026\n5\n4\n\n\nEl Diluvi\nMar 11, 2026\n3\n2\n\n\nConjunto Guantanamo\nMar 03, 2026\n2\n1\n\n\nJohn Pizzarelli\nMar 12, 2026\n2\n1\n\n\nLa Radio Bembé Orquesta\nMar 03, 2026\n2\n1\n\n\nA Good Year\nMar 06, 2026\n1\n1"
+  },
+  {
+    "objectID": "index.html#dashboard-sections",
+    "href": "index.html#dashboard-sections",
+    "title": "Spotify Listening Dashboard",
+    "section": "Dashboard Sections",
+    "text": "Dashboard Sections\n\n\n\n\n\n\n\n Summary\n\n\nOverview of listening patterns — songs per day, weekly, and monthly trends with Repetition KPI and Diversity index.\nOpen Summary →\n\n\n\n\n\n\n\n\n\n Monthly\n\n\nMonth-over-month comparisons, yearly heatmap, seasonal patterns, and full monthly statistics table.\nOpen Monthly →\n\n\n\n\n\n\n\n\n\n Weekly Patterns\n\n\nDay-of-week listening patterns, cumulative unique tracks per week, and historical distributions.\nOpen Weekly →\n\n\n\n\n\n\n\n\n Artists\n\n\nTop artists this month and all time, artist trend over time, and diversity over time.\nOpen Artists →\n\n\n\n\n\n\n\n\n\n\n Discovery\n\n\nNew artists and tracks discovered over time, discovery rate, and your musical exploration score.\nOpen Discovery →\n\n\n\n\n\n\n\n\n\n Intraday\n\n\nWhen you listen — hour-of-day heatmap, peak hours, and session length analysis.\nOpen Intraday →\n\n\n\n\n\n\n\n\n\n Lifecycle\n\n\nArtist lifecycle: sticky favorites, long-running relationships, comebacks, and drifted-away artists.\nOpen Lifecycle →\n\n\n\n\n\n\n\n\nData updated daily · Last rendered on 2026-03-13"
   }
 ]

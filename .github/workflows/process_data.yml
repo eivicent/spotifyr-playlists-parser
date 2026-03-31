@@ -1,0 +1,44 @@
+name: Process Data
+
+on:
+  workflow_run:
+    workflows: ["Daily parsing"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  process:
+    runs-on: windows-latest
+
+    permissions: write-all
+
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+
+      - name: Install R packages
+        run: |
+          Rscript -e "install.packages(c('targets', 'dplyr', 'purrr', 'tidyr', 'stringr', 'lubridate', 'here'), repos = 'https://cran.rstudio.com/', Ncpus = 2, dependencies = TRUE)"
+
+      - name: Run data processing
+        run: Rscript src/scripts/process_data.R
+
+      - name: Commit processed data
+        run: |
+          git config --local user.name github-actions
+          git config --local user.email "actions@github.com"
+          git add data/processed/
+          git diff --staged --quiet || git commit -m "Update processed data on $(date)"
+          git push origin main
+        env:
+          REPO_KEY: ${{ secrets.GITHUB_TOKEN }}
+          username: github-actions

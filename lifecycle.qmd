@@ -1,0 +1,322 @@
+---
+title: "Artist Lifecycle"
+description: "How your relationship with artists evolves over time: sticky favorites, comebacks, and lost loves"
+---
+
+```{r setup}
+#| message: false
+#| warning: false
+
+library(here)
+source(here("src", "utils", "utils.R"))
+load_common_libraries()
+library(viridis)
+```
+
+```{r load-data}
+#| message: false
+#| warning: false
+
+lifecycle <- load_lifecycle()
+
+max_date     <- max(lifecycle$last_listen, na.rm = TRUE)
+active_count <- sum(lifecycle$is_active, na.rm = TRUE)
+total_artists <- nrow(lifecycle)
+comeback_artists <- sum(lifecycle$comeback_count > 0, na.rm = TRUE)
+drifted_artists  <- sum(!lifecycle$is_active & lifecycle$total_plays >= 10, na.rm = TRUE)
+```
+
+## Artist Overview
+
+```{r lifecycle-value-boxes}
+layout_column_wrap(
+  width = 1/4,
+  value_box(
+    title    = "Total Artists Heard",
+    value    = scales::comma(total_artists),
+    showcase = bsicons::bs_icon("people"),
+    theme    = "primary"
+  ),
+  value_box(
+    title    = "Currently Active",
+    value    = scales::comma(active_count),
+    showcase = bsicons::bs_icon("activity"),
+    theme    = "success",
+  ),
+  value_box(
+    title    = "Comeback Artists",
+    value    = scales::comma(comeback_artists),
+    showcase = bsicons::bs_icon("arrow-counterclockwise"),
+    theme    = "info"
+  ),
+  value_box(
+    title    = "Drifted Away",
+    value    = scales::comma(drifted_artists),
+    showcase = bsicons::bs_icon("moon"),
+    theme    = "secondary"
+  )
+)
+```
+
+## Sticky Artists
+
+> **Stickiness** = fraction of days between first and last listen that you actually played this artist. A score of 1.0 would mean you listened every single day since discovery.
+
+```{r sticky-artists}
+#| fig-width: 12
+#| fig-height: 6
+
+sticky <- lifecycle %>%
+  filter(total_days >= 10) %>%
+  arrange(desc(stickiness)) %>%
+  head(15) %>%
+  mutate(
+    artist = factor(artist, levels = rev(artist)),
+    span   = as.integer(last_listen - first_listen) + 1L
+  )
+
+p <- sticky %>%
+  ggplot(aes(x = artist, y = stickiness, fill = stickiness)) +
+  geom_col_interactive(
+    aes(
+      tooltip = paste0(
+        "<b>", artist, "</b><br>",
+        "Stickiness: ", round(stickiness, 3), "<br>",
+        "Days heard: ", total_days, " / ", span, " day span<br>",
+        "Total plays: ", scales::comma(total_plays), "<br>",
+        "First listen: ", format(first_listen, "%b %Y")
+      ),
+      data_id = artist
+    ),
+    alpha = 0.9
+  ) +
+  coord_flip() +
+  scale_fill_gradient(low = "#4A90E2", high = "#1DB954", guide = "none") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     expand = expansion(mult = c(0, 0.1))) +
+  labs(
+    title    = "Top 15 Stickiest Artists",
+    subtitle = "Artists you've listened to on the highest fraction of days since discovery (min. 10 listen-days)",
+    x        = NULL,
+    y        = "Stickiness Score"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 15, face = "bold"),
+    plot.subtitle = element_text(size = 11, color = "gray60"),
+    panel.grid.major.y = element_blank()
+  )
+
+make_girafe(p, height_svg = 6)
+```
+
+## Long-running Favorites
+
+> Artists with the longest active span (days between first and last listen).
+
+```{r long-running}
+#| fig-width: 12
+#| fig-height: 6
+
+long_running <- lifecycle %>%
+  mutate(span_days = as.integer(last_listen - first_listen)) %>%
+  filter(total_plays >= 5) %>%
+  arrange(desc(span_days)) %>%
+  head(15) %>%
+  mutate(artist = factor(artist, levels = rev(artist)))
+
+p <- long_running %>%
+  ggplot(aes(x = artist)) +
+  geom_segment_interactive(
+    aes(
+      xend    = artist,
+      y       = first_listen,
+      yend    = last_listen,
+      tooltip = paste0(
+        "<b>", artist, "</b><br>",
+        "First: ", format(first_listen, "%b %Y"), "<br>",
+        "Last: ", format(last_listen, "%b %Y"), "<br>",
+        "Span: ", span_days, " days<br>",
+        "Total plays: ", scales::comma(total_plays)
+      ),
+      data_id = as.character(artist)
+    ),
+    linewidth = 3, color = "#1DB954", alpha = 0.7
+  ) +
+  geom_point_interactive(
+    aes(y = first_listen,
+        tooltip = paste0("<b>", artist, "</b><br>First listen: ", format(first_listen, "%b %d, %Y")),
+        data_id = paste0("first-", artist)),
+    color = "#4A90E2", size = 2.5
+  ) +
+  geom_point_interactive(
+    aes(y = last_listen,
+        tooltip = paste0("<b>", artist, "</b><br>Last listen: ", format(last_listen, "%b %d, %Y")),
+        data_id = paste0("last-", artist)),
+    color = "#FF6B6B", size = 2.5
+  ) +
+  coord_flip() +
+  scale_y_date(date_labels = "%b %Y", date_breaks = "6 months") +
+  labs(
+    title    = "Artist Active Spans — Top 15 Longest Running",
+    subtitle = "Blue = first listen · Red = last listen · Green bar = active period",
+    x        = NULL,
+    y        = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title    = element_text(size = 15, face = "bold"),
+    plot.subtitle = element_text(size = 11, color = "gray60"),
+    panel.grid.major.y = element_blank(),
+    axis.text.x   = element_text(angle = 45, hjust = 1)
+  )
+
+make_girafe(p, height_svg = 6)
+```
+
+## Comeback Artists
+
+> Artists who disappeared for 90+ days and then returned. More comebacks = a more cyclical listening pattern.
+
+```{r comeback-artists}
+#| fig-width: 12
+#| fig-height: 6
+
+comebacks <- lifecycle %>%
+  filter(comeback_count > 0) %>%
+  arrange(desc(comeback_count), desc(total_plays)) %>%
+  head(15) %>%
+  mutate(artist = factor(artist, levels = rev(artist)))
+
+if (nrow(comebacks) > 0) {
+  p <- comebacks %>%
+    ggplot(aes(x = artist, y = comeback_count, fill = comeback_count)) +
+    geom_col_interactive(
+      aes(
+        tooltip = paste0(
+          "<b>", artist, "</b><br>",
+          "Comebacks: ", comeback_count, "<br>",
+          "Max gap: ", max_gap_days, " days<br>",
+          "Total plays: ", scales::comma(total_plays), "<br>",
+          "First: ", format(first_listen, "%b %Y"), " · Last: ", format(last_listen, "%b %Y")
+        ),
+        data_id = as.character(artist)
+      ),
+      alpha = 0.9
+    ) +
+    coord_flip() +
+    scale_fill_gradient(low = "#FFD700", high = "#FF6B6B", guide = "none") +
+    scale_y_continuous(breaks = scales::pretty_breaks(n = 6),
+                       expand = expansion(mult = c(0, 0.1))) +
+    labs(
+      title    = "Top Comeback Artists",
+      subtitle = "Artists you've rediscovered after gaps of 90+ days",
+      x        = NULL,
+      y        = "Number of Comebacks"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title    = element_text(size = 15, face = "bold"),
+      plot.subtitle = element_text(size = 11, color = "gray60"),
+      panel.grid.major.y = element_blank()
+    )
+
+  make_girafe(p, height_svg = 6)
+} else {
+  cat("No comeback artists found yet (no gaps > 90 days followed by return).")
+}
+```
+
+## Drifted Away
+
+> Artists you used to love but haven't listened to in 180+ days — sorted by how much you played them historically.
+
+```{r drifted-away}
+#| message: false
+
+drifted <- lifecycle %>%
+  filter(!is_active, last_listen < max_date - days(180), total_plays >= 5) %>%
+  arrange(desc(total_plays)) %>%
+  head(30) %>%
+  mutate(
+    days_since = as.integer(max_date - last_listen),
+    year_month_last = format(last_listen, "%B %Y")
+  )
+
+if (nrow(drifted) > 0) {
+  drifted %>%
+    select(artist, total_plays, total_days, days_since, year_month_last, max_gap_days) %>%
+    gt() %>%
+    tab_header(
+      title    = "Artists You've Drifted Away From",
+      subtitle = paste0("Not heard in 180+ days · Sorted by historical plays · Max ", nrow(drifted), " shown")
+    ) %>%
+    cols_label(
+      artist          = "Artist",
+      total_plays     = "Total Plays",
+      total_days      = "Days Heard",
+      days_since      = "Days Since Last",
+      year_month_last = "Last Listened",
+      max_gap_days    = "Max Gap (days)"
+    ) %>%
+    fmt_number(columns = c(total_plays, total_days, days_since, max_gap_days), decimals = 0) %>%
+    data_color(
+      columns = days_since,
+      colors  = scales::col_numeric(palette = c("#FFF9C4", "#FF6B6B"), domain = NULL)
+    ) %>%
+    data_color(
+      columns = total_plays,
+      colors  = scales::col_numeric(palette = c("#E3F2FD", "#1DB954"), domain = NULL)
+    ) %>%
+    opt_interactive(use_search = TRUE, use_filters = TRUE, page_size_default = 10)
+} else {
+  cat("No drifted-away artists found yet.")
+}
+```
+
+## Full Artist Lifecycle Table
+
+```{r lifecycle-table}
+#| message: false
+
+lifecycle %>%
+  mutate(
+    span_days   = as.integer(last_listen - first_listen) + 1L,
+    days_since  = as.integer(max_date - last_listen),
+    status      = if_else(is_active, "Active", "Inactive")
+  ) %>%
+  select(artist, status, first_listen, last_listen, total_plays, total_days,
+         stickiness, comeback_count, max_gap_days) %>%
+  gt() %>%
+  tab_header(
+    title    = "All Artists",
+    subtitle = paste0(scales::comma(nrow(lifecycle)), " artists in listening history")
+  ) %>%
+  cols_label(
+    artist         = "Artist",
+    status         = "Status",
+    first_listen   = "First Heard",
+    last_listen    = "Last Heard",
+    total_plays    = "Plays",
+    total_days     = "Days",
+    stickiness     = "Stickiness",
+    comeback_count = "Comebacks",
+    max_gap_days   = "Max Gap"
+  ) %>%
+  fmt_number(columns = c(total_plays, total_days, comeback_count, max_gap_days), decimals = 0) %>%
+  fmt_number(columns = stickiness, decimals = 3) %>%
+  fmt_date(columns = c(first_listen, last_listen), date_style = "wday_month_day_year") %>%
+  data_color(
+    columns = stickiness,
+    colors  = scales::col_numeric(palette = c("#E3F2FD", "#1DB954"), domain = c(0, 1))
+  ) %>%
+  tab_style(
+    style = list(cell_text(color = "#1DB954", weight = "bold")),
+    locations = cells_body(columns = status, rows = status == "Active")
+  ) %>%
+  opt_interactive(use_search = TRUE, use_filters = TRUE, page_size_default = 15)
+```
+
+---
+
+*Last updated on `r Sys.Date()`*

@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
   workflow_run:
-    workflows: ["Daily parsing"]
+    workflows: ["Process Data"]
     types:
       - completed
   workflow_dispatch:
@@ -21,7 +21,10 @@ concurrency:
 jobs:
   build:
     runs-on: windows-latest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +36,7 @@ jobs:
 
       - name: Install R packages
         run: |
-          Rscript -e "install.packages(c('ggplot2', 'dplyr', 'purrr', 'tidyr', 'stringr', 'lubridate', 'gt', 'patchwork', 'here', 'bslib', 'scales'), repos = 'https://cran.rstudio.com/', Ncpus = 2, dependencies = TRUE)"
+          Rscript -e "install.packages(c('ggplot2', 'dplyr', 'purrr', 'tidyr', 'stringr', 'lubridate', 'gt', 'patchwork', 'here', 'bslib', 'scales', 'ggiraph', 'viridis', 'bsicons', 'zoo'), repos = 'https://cran.rstudio.com/', Ncpus = 2, dependencies = TRUE)"
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
