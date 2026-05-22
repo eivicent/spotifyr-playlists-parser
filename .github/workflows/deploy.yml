@@ -58,8 +58,6 @@ jobs:
 
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-        with:
-          version: 1.4.554
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
