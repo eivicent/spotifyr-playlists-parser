@@ -36,8 +36,6 @@ jobs:
         with:
           packages: |
             any::spotifyr
-            any::dplyr
-            any::lubridate
           cache-version: 1
 
       - name: Run script

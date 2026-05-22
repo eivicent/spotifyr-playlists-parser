@@ -47,7 +47,6 @@ jobs:
             any::stringr
             any::lubridate
             any::gt
-            any::patchwork
             any::here
             any::bslib
             any::scales
