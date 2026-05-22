@@ -2,45 +2,57 @@ name: Daily parsing
 
 on:
   schedule:
-    - cron: "0 */8 * * *" # Run every 18 hours
+    - cron: "0 6 * * *" # Daily at 06:00 UTC
   workflow_dispatch:
 
 jobs:
   run_script:
-    runs-on: windows-latest
-    
+    runs-on: ubuntu-latest
+
     permissions: write-all
-    
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          
+
       - name: Decrypt large secret
         run: ./src/utils/decrypt_secret.sh
         shell: bash
         env:
           LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
-      
+
       - name: Test
         run: ls ./
-        
+
       - uses: r-lib/actions/setup-pandoc@v2
       - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Restore cached R packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::spotifyr
+            any::dplyr
+            any::lubridate
+          cache-version: 1
+
       - name: Run script
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
         run: Rscript src/scripts/daily_parsing.R
-        
+
       - name: Commit files
         run: |
           git config --local user.name github-actions
           git config --local user.email "actions@github.com"
-          
+
           # Add all CSV files in data/daily/ directory
-          git add ./data/daily/*.csv        
+          git add ./data/daily/*.csv
           git commit -m "Daily parsing commit on $(date)"
           git push origin main
         env:
