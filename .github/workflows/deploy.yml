@@ -39,6 +39,7 @@ jobs:
       - name: Restore cached R packages
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          install-quarto: false
           packages: |
             any::ggplot2
             any::dplyr
