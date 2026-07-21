@@ -48,38 +48,34 @@ clean_api_call_output <- function(output_from_get_my_recently_played) {
     normalize_daily_df()
 }
 
-# Most recent listening timestamp from daily files (last 7 days), else history.txt
+# Most recent listening timestamp from daily CSVs (newest file first), else history.txt
 get_latest_timestamp <- function() {
-  recent_dates <- seq(Sys.Date() - 7, Sys.Date(), by = "day")
-  latest_timestamp <- NULL
-
-  for (date in rev(recent_dates)) {
-    file_path <- paste0("./data/daily/", date, ".csv")
-    if (file.exists(file_path)) {
+  daily_files <- list.files("./data/daily", pattern = "^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.csv$", full.names = TRUE)
+  if (length(daily_files) > 0) {
+    # Filenames are ISO dates — sort descending to read newest first
+    daily_files <- sort(daily_files, decreasing = TRUE)
+    for (file_path in daily_files) {
       df <- read_daily_csv(file_path)
-      if (nrow(df) > 0) {
-        latest_timestamp <- max(df$played, na.rm = TRUE)
-        break
+      if (nrow(df) > 0 && any(!is.na(df$played))) {
+        return(max(df$played, na.rm = TRUE))
       }
     }
   }
 
-  if (is.null(latest_timestamp)) {
-    history_file <- "./data/daily/history.txt"
-    if (file.exists(history_file)) {
-      message("No recent daily files found, reading from history.txt...")
-      last_lines <- utils::tail(readLines(history_file), 10)
-      if (length(last_lines) > 1) {
-        last_entry <- strsplit(last_lines[length(last_lines)], ";", fixed = TRUE)[[1]]
-        if (length(last_entry) >= 4) {
-          played_str <- gsub('"', "", last_entry[4])
-          latest_timestamp <- as.POSIXct(played_str, tz = "GMT")
-        }
+  history_file <- "./data/daily/history.txt"
+  if (file.exists(history_file)) {
+    message("No daily CSV timestamps found, reading from history.txt...")
+    last_lines <- utils::tail(readLines(history_file), 10)
+    if (length(last_lines) > 1) {
+      last_entry <- strsplit(last_lines[length(last_lines)], ";", fixed = TRUE)[[1]]
+      if (length(last_entry) >= 4) {
+        played_str <- gsub('"', "", last_entry[4])
+        return(as.POSIXct(played_str, tz = "GMT"))
       }
     }
   }
 
-  latest_timestamp
+  NULL
 }
 
 # Main execution — uses user OAuth token (decrypted RDS), not client-credentials
