@@ -53,3 +53,9 @@ secrets/
 
 # targets pipeline cache (only data/processed/ is committed, not metadata)
 /_targets/
+
+# Quarto output — built and published by GitHub Actions, not committed
+/docs/
+
+# Accidental local figure output from Quarto renders at repo root
+/monthly_files/

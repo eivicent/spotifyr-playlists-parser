@@ -19,20 +19,19 @@ load_common_libraries()
 daily   <- load_daily_processed()
 weekly  <- load_weekly_processed()
 monthly <- load_monthly_processed()
+coverage <- compute_data_coverage(daily)
 ```
 
 ```{r value-boxes}
-total_days  <- nrow(daily)
+total_days  <- coverage$days_with_data
 total_songs <- sum(daily$total_songs)
 avg_songs   <- round(mean(daily$total_songs), 1)
-date_range  <- paste(format(min(daily$date), "%b %d, %Y"), "–", format(max(daily$date), "%b %d, %Y"))
-total_unique <- sum(daily$unique_songs)
-overall_rep  <- round(total_songs / n_distinct(daily$date), 1)
+date_range  <- paste(format(coverage$first_date, "%b %d, %Y"), "–", format(coverage$last_date, "%b %d, %Y"))
 
 layout_column_wrap(
   width = 1/3,
   value_box(
-    title    = "Total Days Tracked",
+    title    = "Days With Data",
     value    = scales::comma(total_days),
     showcase = bsicons::bs_icon("calendar-check"),
     theme    = "success"
@@ -44,7 +43,7 @@ layout_column_wrap(
     theme    = "primary"
   ),
   value_box(
-    title    = "Avg Songs / Day",
+    title    = "Avg Songs / Day (with data)",
     value    = avg_songs,
     showcase = bsicons::bs_icon("bar-chart"),
     theme    = "secondary"
@@ -54,12 +53,24 @@ layout_column_wrap(
 
 ```{r value-boxes-2}
 layout_column_wrap(
-  width = 1/2,
+  width = 1/4,
   value_box(
     title    = "Date Range",
     value    = date_range,
     showcase = bsicons::bs_icon("calendar-range"),
     theme    = "dark"
+  ),
+  value_box(
+    title    = "Coverage",
+    value    = paste0(coverage$coverage_pct, "%"),
+    showcase = bsicons::bs_icon("pie-chart"),
+    theme    = if (isTRUE(coverage$coverage_pct >= 95)) "success" else if (isTRUE(coverage$coverage_pct >= 85)) "warning" else "danger"
+  ),
+  value_box(
+    title    = "Missing Days",
+    value    = scales::comma(coverage$missing_days),
+    showcase = bsicons::bs_icon("calendar-x"),
+    theme    = "secondary"
   ),
   value_box(
     title    = "Overall Repetition KPI",

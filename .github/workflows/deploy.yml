@@ -3,6 +3,13 @@ name: Deploy Quarto Website to GitHub Pages
 on:
   push:
     branches: [ main ]
+    paths:
+      - "*.qmd"
+      - "_quarto.yml"
+      - "styles.css"
+      - "src/utils/**"
+      - "src/R/**"
+      - ".github/workflows/deploy.yml"
   workflow_run:
     workflows: ["Process Data"]
     types:
@@ -82,6 +89,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-
-

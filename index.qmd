@@ -40,6 +40,8 @@ this_week_unique  <- if (nrow(this_week) > 0) this_week$unique_songs  else 0
 this_week_shannon <- if (nrow(this_week) > 0) round(this_week$shannon_diversity, 2) else NA
 last_week_shannon <- if (nrow(last_week) > 0) round(last_week$shannon_diversity, 2) else NA
 
+coverage <- compute_data_coverage(daily)
+
 # New tracks this week
 this_week_discovery <- discovery %>%
   filter(date >= current_week_start) %>%
@@ -52,14 +54,13 @@ sessions_this_week <- sessions %>%
   filter(date >= current_week_start) %>%
   nrow()
 
-# Top artist this week (from raw artist plays — approximate via lifecycle first_listen)
-# Use daily data for this week's top artist via raw files  
+# Top artist this week via shared daily CSV reader
 top_artist_week <- tryCatch({
   raw_week <- list.files(here("data", "daily"), pattern = "\\.csv$", full.names = TRUE) %>%
     .[as.Date(stringr::str_remove(basename(.), "\\.csv$")) >= current_week_start] %>%
     purrr::map_dfr(function(f) {
-      df <- tryCatch(read.csv(f, sep = ";", stringsAsFactors = FALSE), error = function(e) NULL)
-      if (is.null(df) || nrow(df) == 0) return(NULL)
+      df <- read_daily_csv(f)
+      if (nrow(df) == 0) return(NULL)
       df %>% dplyr::select(name)
     })
   if (nrow(raw_week) > 0) {
@@ -134,6 +135,40 @@ layout_column_wrap(
     value    = if (!is.na(this_week_shannon)) this_week_shannon else "—",
     showcase = bsicons::bs_icon("shuffle"),
     theme    = "dark"
+  )
+)
+```
+
+## Data Coverage
+
+Days with at least one play vs the calendar span from first to last observed date. Gaps usually mean the daily scrape missed Spotify's short Recently Played window.
+
+```{r coverage-boxes}
+layout_column_wrap(
+  width = 1/4,
+  value_box(
+    title    = "Coverage",
+    value    = paste0(coverage$coverage_pct, "%"),
+    showcase = bsicons::bs_icon("pie-chart"),
+    theme    = if (isTRUE(coverage$coverage_pct >= 95)) "success" else if (isTRUE(coverage$coverage_pct >= 85)) "warning" else "danger"
+  ),
+  value_box(
+    title    = "Missing Days",
+    value    = scales::comma(coverage$missing_days),
+    showcase = bsicons::bs_icon("calendar-x"),
+    theme    = "secondary"
+  ),
+  value_box(
+    title    = "Largest Gap",
+    value    = paste0(coverage$largest_gap_days, "d"),
+    showcase = bsicons::bs_icon("hourglass-split"),
+    theme    = "dark"
+  ),
+  value_box(
+    title    = "Last Data Day",
+    value    = format(coverage$last_date, "%b %d, %Y"),
+    showcase = bsicons::bs_icon("calendar-event"),
+    theme    = "info"
   )
 )
 ```

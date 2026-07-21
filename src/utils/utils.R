@@ -1,6 +1,8 @@
 # Spotify Playlists Parser - Utility Functions
 # Standardized functions for use across all .qmd files
 
+source(here::here("src", "R", "daily_io.R"))
+
 load_common_libraries <- function() {
   library(dplyr)
   library(purrr)
@@ -73,6 +75,48 @@ load_lifecycle <- function() {
   readRDS(path) %>% arrange(desc(total_plays))
 }
 
+# ── Data coverage (missing days between first and last observed date) ─────────
+
+#' Summarise calendar coverage from daily processed data.
+#' @param daily tibble with a `date` column (from load_daily_processed())
+compute_data_coverage <- function(daily) {
+  dates <- sort(unique(as.Date(daily$date)))
+  if (length(dates) == 0) {
+    return(list(
+      first_date = as.Date(NA),
+      last_date = as.Date(NA),
+      days_with_data = 0L,
+      span_days = 0L,
+      missing_days = 0L,
+      coverage_pct = NA_real_,
+      largest_gap_days = 0L,
+      missing_dates = as.Date(character())
+    ))
+  }
+
+  first_date <- min(dates)
+  last_date <- max(dates)
+  expected <- seq(first_date, last_date, by = "day")
+  missing_dates <- as.Date(setdiff(expected, dates))
+
+  gaps <- if (length(dates) < 2) {
+    0L
+  } else {
+    as.integer(max(diff(as.integer(dates))) - 1L)
+  }
+
+  list(
+    first_date = first_date,
+    last_date = last_date,
+    days_with_data = length(dates),
+    span_days = length(expected),
+    missing_days = length(missing_dates),
+    coverage_pct = round(100 * length(dates) / length(expected), 1),
+    largest_gap_days = max(gaps, 0L),
+    missing_dates = missing_dates
+  )
+}
+
 # ── Backwards-compatible aliases ─────────────────────────────────────────────
 
 # Kept for any remaining callers; returns daily processed data with legacy
@@ -94,29 +138,18 @@ get_daily_files <- function() {
 }
 
 read_daily_file_artist <- function(file_path) {
-  if (!file.exists(file_path)) return(NULL)
-  daily_data <- tryCatch(
-    read.csv(file_path, sep = ";", stringsAsFactors = FALSE),
-    error = function(e) NULL
-  )
-  if (is.null(daily_data) || nrow(daily_data) == 0) return(NULL)
-
-  date_str <- basename(file_path) %>%
-    stringr::str_remove("\\.csv$")
-
-  if ("day" %in% colnames(daily_data) && !all(is.na(daily_data$day))) {
-    daily_data$date <- as.Date(daily_data$day)
-  } else if ("played_at" %in% colnames(daily_data)) {
-    daily_data$date <- as.Date(substr(daily_data$played_at, 1, 10))
-  } else {
-    daily_data$date <- as.Date(date_str)
-  }
+  daily_data <- read_daily_csv(file_path)
+  if (nrow(daily_data) == 0) return(NULL)
 
   daily_data %>%
-    dplyr::select(name, date, track.name) %>%
+    dplyr::mutate(date = .data$day) %>%
+    dplyr::select(
+      name, date, track.name, track.id, artist.id,
+      featured_artists, featured_artist_ids
+    ) %>%
     dplyr::filter(!is.na(name), !is.na(date)) %>%
     dplyr::rename(song = track.name) %>%
-    as_tibble()
+    tibble::as_tibble()
 }
 
 load_artist_data <- function() {

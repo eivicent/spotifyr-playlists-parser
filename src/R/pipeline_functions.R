@@ -12,6 +12,8 @@ suppressPackageStartupMessages({
   library(here)
 })
 
+source(here("src", "R", "daily_io.R"))
+
 # ── Raw file helpers ──────────────────────────────────────────────────────────
 
 #' Build a tibble of all daily CSV paths and their dates.
@@ -29,14 +31,12 @@ get_file_df <- function(csv_files = NULL) {
 
 #' Read a single daily CSV; attaches file_date column.
 read_raw_day <- function(file_path) {
+  df <- read_daily_csv(file_path)
+  if (nrow(df) == 0) return(NULL)
+
   date_str <- basename(file_path) %>% str_remove("\\.csv$")
-  df <- tryCatch(
-    read.csv(file_path, sep = ";", stringsAsFactors = FALSE),
-    error = function(e) NULL
-  )
-  if (is.null(df) || nrow(df) == 0) return(NULL)
-  df$file_date <- as.Date(date_str)
-  as_tibble(df)
+  as_tibble(df) %>%
+    mutate(file_date = as.Date(date_str))
 }
 
 #' Read and bind all files for a period into one tibble.
@@ -257,12 +257,12 @@ compute_sessions <- function(file_df) {
   }) %>%
     group_by(file_date, session_id) %>%
     summarise(
-      session_start        = min(played_dt),
-      session_start_hour   = hour(min(played_dt)),
-      session_songs        = n(),
+      session_start          = min(played_dt),
+      session_start_hour     = hour(min(played_dt)),
+      session_songs          = n(),
       session_unique_tracks  = n_distinct(track.name),
       session_unique_artists = n_distinct(name),
-      .groups              = "drop"
+      .groups                = "drop"
     ) %>%
     rename(date = file_date) %>%
     arrange(date, session_id)

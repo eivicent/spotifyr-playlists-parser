@@ -1,57 +1,94 @@
 # My personal Spotify Listening Dashboard
 
-A comprehensive dashboard for analyzing personal Spotify listening habits, built with Quarto and R.
+Personal analytics over Spotify listening history: daily API scrape → aggregated tables → Quarto website on GitHub Pages.
 
-## 🎵 Features
+**Live site:** [https://eivicent.github.io/spotifyr-playlists-parser/](https://eivicent.github.io/spotifyr-playlists-parser/)
 
-- **Summary**: Overview of your Spotify listening patterns and trends
-- **Artists**: Top artists analysis and listening streaks
+This project is for personal use and educational purposes. Full listening history is stored in this public repo.
 
-## 🚀 Live Dashboard
+## Features
 
-Visit the live dashboard: [https://eivicent.github.io/spotifyr-playlists-parser/](https://eivicent.github.io/spotifyr-playlists-parser/)
+| Page | What it shows |
+|------|----------------|
+| **Home** | This-week glance, data coverage, recent trends |
+| **Summary** | Songs/day trends, repetition KPI, diversity |
+| **Monthly** | Month-over-month comparisons and seasonality |
+| **Weekly Patterns** | Day-of-week patterns and weekly cumulatives |
+| **Artists** | Top artists, streaks, diversity over time |
+| **Discovery** | New artists/tracks and discovery rates |
+| **Intraday** | Hour-of-day heatmap and listening sessions |
+| **Lifecycle** | Artist stickiness, comebacks, drift |
 
-## 📊 Data Structure
+## Pipeline
 
-The dashboard processes daily CSV files from your Spotify listening history:
-
+```text
+Daily parsing (cron)  →  data/daily/YYYY-MM-DD.csv
+        ↓
+Process Data (targets) →  data/processed/*.rds
+        ↓
+Deploy Quarto site     →  GitHub Pages
 ```
+
+1. **Daily parsing** (`.github/workflows/daily_parsing.yml`) — runs **3×/day** (`06:00`, `14:00`, `22:00` UTC), decrypts the OAuth token, calls Spotify Recently Played, appends/dedupes into per-day CSVs.
+2. **Process Data** (`.github/workflows/process_data.yml`) — runs `targets` (`_targets.R` + `src/R/pipeline_functions.R`) and commits aggregates under `data/processed/`.
+3. **Deploy** (`.github/workflows/deploy.yml`) — `quarto render` after Process Data succeeds, or when site source files change. The `docs/` output is built in CI only (not committed).
+
+### Local development
+
+```bash
+# 1. Install R packages used by the site (see deploy.yml) plus targets / spotifyr as needed
+# 2. Aggregate raw CSVs (requires data/daily/)
+Rscript src/scripts/process_data.R
+
+# 3. Render the site
+quarto render
+
+# 4. Open docs/index.html
+```
+
+Scraping locally also needs `secrets/my_secret` (see below) and Spotify app credentials in the environment.
+
+## Data layout
+
+```text
 data/
-├── daily/           # Daily listening data (CSV files)
-│   ├── 2023-08-08.csv
-│   ├── 2023-08-09.csv
-│   └── ...
-└── weekly/          # Weekly discover data (CSV files)
+├── daily/       # Per-day listening CSVs (source of truth)
+├── processed/   # Aggregates produced by targets (*.rds)
+└── weekly/      # Legacy Discover Weekly archives (kept; not used by the site)
 ```
 
-Each daily CSV file contains:
-- `played_at`: Timestamp when the song was played
-- `track.name`: Name of the track
-- `name`: Artist name
-- `played`: Formatted timestamp
-- `day`: Date of listening
+### Daily CSV schema
 
-## 🛠️ Technical Details
+Semicolon-separated, quoted. Shared reader/writer: `src/R/daily_io.R`.
 
-- **Framework**: Quarto (R Markdown)
-- **Visualization**: ggplot2, gt tables
-- **Deployment**: GitHub Pages with GitHub Actions
-- **Styling**: Custom CSS with Spotify brand colors
+| Column | Description |
+|--------|-------------|
+| `played_at` | Spotify timestamp |
+| `track.name` | Track title |
+| `track.id` | Spotify track ID (empty on older files) |
+| `name` | Primary artist name |
+| `artist.id` | Primary artist Spotify ID (empty on older files) |
+| `featured_artists` | Additional artists, `\|`-separated (empty if solo / older files) |
+| `featured_artist_ids` | Additional artist IDs, `\|`-separated (empty if solo / older files) |
+| `played` | Parsed play time |
+| `day` | Calendar date |
 
-## 📈 Dashboard Pages
+Charts and aggregates still key off the **primary** artist (`name` / `artist.id`). Featured columns are stored for collabs without changing existing top-artist logic.
 
-1. **Summary**: Listening patterns, trends, and comprehensive statistics
-2. **Artists**: Top artists, listening streaks, and artist analysis
+Identity for analytics currently uses display names so historical rows without IDs stay continuous. `track.id` / `artist.id` are stored going forward for enrichment and a future ID-based key switch after backfill.
 
-## 🔧 Local Development
+## Secrets & auth
 
-To run the dashboard locally:
+GitHub Actions secrets:
 
-1. Clone the repository
-2. Install R and required packages
-3. Run `quarto render` to build the site
-4. Open `docs/index.html` in your browser
+- `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` — Spotify developer app
+- `LARGE_SECRET_PASSPHRASE` — decrypts `config/my_secret.gpg` → `secrets/my_secret` (user OAuth token used by the scrape)
 
-## 📝 License
+`secrets/` and `.httr-oauth` are gitignored. Do not commit plaintext tokens.
 
-This project is for personal use and educational purposes.
+## Tech stack
+
+- **R** + [`spotifyr`](https://github.com/charlie86/spotifyr), [`targets`](https://books.ropensci.org/targets/), tidyverse-ish stack
+- **Quarto** website (`cosmo` theme, `styles.css`)
+- **Viz:** ggplot2, ggiraph, gt, bslib value boxes
+- **CI:** GitHub Actions → GitHub Pages

@@ -2,7 +2,9 @@ name: Daily parsing
 
 on:
   schedule:
-    - cron: "0 6 * * *" # Daily at 06:00 UTC
+    # 3×/day (every 8h) — Recently Played window is short; more scrapes = fewer gaps.
+    # Public repos do not consume billed Actions minutes on standard runners.
+    - cron: "0 6,14,22 * * *"
   workflow_dispatch:
 
 jobs:
@@ -34,6 +36,8 @@ jobs:
         with:
           packages: |
             any::spotifyr
+            any::dplyr
+            any::lubridate
           cache-version: 1
 
       - name: Run script
