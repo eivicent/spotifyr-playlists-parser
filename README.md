@@ -86,6 +86,24 @@ GitHub Actions secrets:
 
 `secrets/` and `.httr-oauth` are gitignored. Do not commit plaintext tokens.
 
+### Refreshing the OAuth token
+
+Spotify no longer accepts `localhost` redirect URIs. In the [Developer Dashboard](https://developer.spotify.com/dashboard) register:
+
+```text
+http://127.0.0.1:1410/
+```
+
+Then locally (opens a browser):
+
+```bash
+export HTTR_SERVER=127.0.0.1 HTTR_SERVER_PORT=1410
+# ensure SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET are in ~/.Renviron
+Rscript -e 'library(spotifyr); readRenviron("~/.Renviron"); Sys.setenv(HTTR_SERVER="127.0.0.1"); tok <- httr::oauth2.0_token(httr::oauth_endpoint(authorize="https://accounts.spotify.com/authorize", access="https://accounts.spotify.com/api/token"), httr::oauth_app("spotifyr", Sys.getenv("SPOTIFY_CLIENT_ID"), Sys.getenv("SPOTIFY_CLIENT_SECRET")), scope="user-read-recently-played user-read-email user-read-private", use_basic_auth=TRUE, cache=FALSE); dir.create("secrets", showWarnings=FALSE); saveRDS(list(tok), "secrets/my_secret")'
+# Re-encrypt with the same passphrase stored in LARGE_SECRET_PASSPHRASE, then commit config/my_secret.gpg
+```
+
+
 ## Tech stack
 
 - **R** + [`spotifyr`](https://github.com/charlie86/spotifyr), [`targets`](https://books.ropensci.org/targets/), tidyverse-ish stack
